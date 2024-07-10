@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <title>Edit GPS Map</title>
+    <style>
+      .container-gps {
+        border: 1px solid;
+        aspect-ratio: 4/3;
+        width: 1024px;
+        height: 768px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+      .description {
+        margin: 0 24px;
+        position: absolute;
+        bottom: 19px;
+        display: flex;
+        flex-direction: row;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .description-gps {
+        display: flex;
+        height: 192px;
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        margin-left: 18px;
+        width: 764px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 15px 17px;
+        line-height: 28px;
+      }
+      .maps {
+        border-radius: 5px;
+        width: 192px;
+        height: 192px;
+        background-color: rgba(0, 0, 0, 0.75);
+        background-size: cover;
+      }
+      .title {
+        font-weight: bold;
+        font-size: 24px;
+      }
+      .text-description {
+        font-size: 19px;
+      }
+      .logo {
+        background-color: rgba(0, 0, 0, 0.75);
+        right: 24px;
+        bottom: 211px;
+        padding: 3px 7px;
+        width: 267px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        font-weight: bold;
+        position: absolute;
+        color: #fff;
+        font-size: 25px;
+      }
+      .img-logo {
+        width: 36px;
+      }
+      .google-logo {
+        position: absolute;
+        left: 5px;
+        bottom: 0px;
+        width: 66px;
+        height: 26px;
+        user-select: none;
+        border: 0px;
+        padding: 0px;
+        margin: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="container">
+      <div class="row">
+        <div class="col-md-12 mt-2">
+          <div class="mb-3">
+            <label for="fc1" class="form-label">Judul</label>
+            <input
+              type="text"
+              name="title"
+              class="form-control input-form"
+              id="fc1"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="fc1" class="form-label">alamat</label>
+            <input
+              type="text"
+              name="alamat"
+              class="form-control input-form"
+              id="fc1"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="fc2" class="form-label">Latitude</label>
+            <input
+              type="text"
+              name="lat"
+              class="form-control input-form"
+              id="fc2"
+              value="-3.4356246"
+              placeholder="-3.445356"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="fc3" class="form-label">Longitude</label>
+            <input
+              type="text"
+              name="long"
+              class="form-control input-form"
+              id="fc3"
+              value="114.8040702"
+              placeholder="114.845308°"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="fc4" class="form-label">Tanggal dan Jam</label>
+            <input
+              type="text"
+              name="waktu"
+              class="form-control input-form"
+              id="fc4"
+              placeholder="09/07/24 11:34 AM GMT +08:00"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">File Gambar</label>
+            <input class="form-control" type="file" id="formFile" />
+          </div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">File Map</label>
+            <input class="form-control" type="file" id="formFile2" />
+          </div>
+          <div class="mb-3">
+            <!-- <button id="btn-download" type="button" class="btn btn-primary">
+              Download
+            </button> -->
+            <button id="btn-download2" type="button" class="btn btn-primary">
+              Download V2
+            </button>
+            <button id="btn-position" type="button" class="btn btn-primary">
+              Set Posisi
+            </button>
+          </div>
+        </div>
+        <div class="col-md-12 d-flex justify-content-center mb-3">
+          <div id="preview" class="container-gps">
+            <div class="logo">
+              <img src="/logo.png" class="img-logo" /> GPS Map Camera
+            </div>
+            <div class="description">
+              <div id="maps" class="maps"></div>
+              <img src="/google-logo.png" class="google-logo" />
+
+              <div class="description-gps">
+                <span id="title" class="title"
+                  >Kecamatan Banjarbaru Selatan, Kalimantan Selatan,
+                  Indonesia</span
+                >
+                <span id="alamat" class="text-description"
+                  >HR4W+268, Loktabat Sel., Kec. Banjarbaru Selatan, Kota
+                  Banjarbaru, Kalimantan Selatan 70714, Indonesia</span
+                >
+                <span class="text-description"
+                  >Lat <span id="lat">-3.445356</span>°</span
+                >
+                <span class="text-description"
+                  >Long <span id="long">114.845308</span>°</span
+                >
+                <span id="waktu" class="text-description"
+                  >09/07/24 11:34 AM GMT +08:00</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/dist/dom-to-image.js"></script>
+    <script src="/dist/html2canvas.min.js"></script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const apiKey = "AIzaSyC8KjrYrb4xieDHjBSOckEcyWv-yakIzXE";
+      var map;
+      var marker;
+      function readURL(input, target) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $(target).css("background-image", "url(" + e.target.result + ")");
+          };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+      async function initMap() {
+        const position = new google.maps.LatLng(51.508742, -0.12085);
+        var mapProp = {
+          center: position,
+          zoom: 15,
+          mapTypeId: "satellite",
+          mapId: "PREVIEW_MAP",
+          disableDefaultUI: true,
+        };
+
+        map = new google.maps.Map(document.getElementById("maps"), mapProp);
+        marker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: position,
+          // title: "Uluru",
+        });
+        setTimeout(() => {
+          hideInfo();
+        }, 500);
+      }
+      function hideInfo() {
+        $(".maps").find(".gmnoprint").parent().hide();
+        $(".maps").find("a").hide();
+      }
+      $(() => {
+        $("#btn-position").click(function () {
+          const lat = $("input[name='lat']").val();
+          const long = $("input[name='long']").val();
+          const position = new google.maps.LatLng(lat, long);
+
+          map.setCenter(position);
+          marker.position = position;
+        });
+        $(".input-form").keyup(function () {
+          const value = $(this).val();
+          console.log(value);
+          const name = $(this).attr("name");
+          $(`#${name}`).html(value);
+        });
+        $("#formFile").change(function () {
+          readURL(this, ".container-gps");
+        });
+        $("#formFile2").change(function () {
+          readURL(this, ".maps");
+        });
+        $("#btn-download2").click(function () {
+          const domNode = document.getElementById("preview");
+          const scale = 1.5;
+          html2canvas(domNode, {
+            useCORS: true,
+            scale: scale,
+          }).then(function (canvas) {
+            var link = document.createElement("a");
+            link.download = "edit-gps.jpg";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          });
+        });
+        $("#btn-download").click(function () {
+          const domNode = document.getElementById("preview");
+          const scale = 2;
+          domtoimage
+            .toJpeg(domNode, {
+              width: domNode.clientWidth * scale,
+              height: domNode.clientHeight * scale,
+              style: {
+                transform: "scale(" + scale + ")",
+                transformOrigin: "top left",
+                width: domNode.offsetWidth + "px",
+                height: domNode.offsetHeight + "px",
+              },
+            })
+            .then(function (dataUrl) {
+              var link = document.createElement("a");
+              link.download = "my-image-name.jpeg";
+              link.href = dataUrl;
+              link.click();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        });
+      });
+    </script>
+    <script
+      async
+      crossorigin="anonymous"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8KjrYrb4xieDHjBSOckEcyWv-yakIzXE&loading=async&callback=initMap&libraries=marker"
+    ></script>
+  </body>
+</html>
