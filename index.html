@@ -100,39 +100,50 @@
               name="title"
               class="form-control input-form"
               id="fc1"
-              placeholder="name@example.com"
             />
           </div>
+          <div class="row">
+            <div class="col">
+              <div class="mb-3">
+                <label for="fc2" class="form-label">Latitude</label>
+                <input
+                  type="text"
+                  name="lat"
+                  class="form-control input-form"
+                  id="fc2"
+                  value="-3.4454144"
+                  placeholder="-3.445356"
+                />
+              </div>
+            </div>
+            <div class="col">
+              <div class="mb-3">
+                <label for="fc3" class="form-label">Longitude</label>
+                <input
+                  type="text"
+                  name="long"
+                  class="form-control input-form"
+                  id="fc3"
+                  value="114.8455475"
+                  placeholder="114.845308°"
+                />
+              </div>
+            </div>
+            <div class="col" style="align-content: center">
+              <button id="btn-position" type="button" class="btn btn-primary">
+                Set Posisi
+              </button>
+            </div>
+          </div>
           <div class="mb-3">
-            <label for="fc1" class="form-label">alamat</label>
+            <label for="fcalamat" class="form-label">alamat</label>
             <input
               type="text"
               name="alamat"
               class="form-control input-form"
-              id="fc1"
-              placeholder="name@example.com"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="fc2" class="form-label">Latitude</label>
-            <input
-              type="text"
-              name="lat"
-              class="form-control input-form"
-              id="fc2"
-              value="-3.4356246"
-              placeholder="-3.445356"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="fc3" class="form-label">Longitude</label>
-            <input
-              type="text"
-              name="long"
-              class="form-control input-form"
-              id="fc3"
-              value="114.8040702"
-              placeholder="114.845308°"
+              id="fcalamat"
+              readonly
+              placeholder=""
             />
           </div>
           <div class="mb-3">
@@ -149,7 +160,7 @@
             <label for="formFile" class="form-label">File Gambar</label>
             <input class="form-control" type="file" id="formFile" />
           </div>
-          <div class="mb-3">
+          <div class="mb-3 d-none">
             <label for="formFile" class="form-label">File Map</label>
             <input class="form-control" type="file" id="formFile2" />
           </div>
@@ -158,10 +169,7 @@
               Download
             </button> -->
             <button id="btn-download2" type="button" class="btn btn-primary">
-              Download V2
-            </button>
-            <button id="btn-position" type="button" class="btn btn-primary">
-              Set Posisi
+              Download
             </button>
           </div>
         </div>
@@ -254,7 +262,18 @@
           const lat = $("input[name='lat']").val();
           const long = $("input[name='long']").val();
           const position = new google.maps.LatLng(lat, long);
+          fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}&language=id`
+          )
+            .then((res) => {
+              return res.json();
+            })
+            .then((jsonValue) => {
+              console.log(jsonValue);
 
+              const alamat = jsonValue.results.at(0).formatted_address;
+              $("#fcalamat").val(alamat);
+            });
           map.setCenter(position);
           marker.position = position;
         });
