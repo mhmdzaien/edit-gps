@@ -274,6 +274,7 @@
               const alamat = jsonValue.results.at(0).formatted_address;
               $("#fcalamat").val(alamat);
               $("#fcalamat").change();
+              $("#alamat").html(alamat);
             });
           map.setCenter(position);
           marker.position = position;
