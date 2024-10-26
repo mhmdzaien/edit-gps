@@ -1,0 +1,10 @@
+export { Types, IExif, IExifElement } from "./interfaces";
+export { TagValues } from "./constants";
+export { GPSHelper } from "./helper";
+export { ValueConvertError } from "./exceptions";
+import { IExif } from "./interfaces";
+export declare const version = "2.0.0b";
+export declare const remove: (imageBinary: string) => string;
+export declare const insert: (exifBinary: string, imageBinary: string) => string;
+export declare const load: (binary: string) => IExif;
+export declare const dump: (originalExifObj: IExif) => string;

@@ -12,6 +12,17 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
 
     <title>Edit GPS Map</title>
     <style>
@@ -77,6 +88,7 @@
         width: 36px;
       }
       .google-logo {
+        z-index: 999;
         position: absolute;
         left: 5px;
         bottom: 0px;
@@ -111,7 +123,7 @@
                   name="lat"
                   class="form-control input-form"
                   id="fc2"
-                  value="-3.4454144"
+                  value="-2.5609219444444444"
                   placeholder="-3.445356"
                 />
               </div>
@@ -124,7 +136,7 @@
                   name="long"
                   class="form-control input-form"
                   id="fc3"
-                  value="114.8455475"
+                  value="115.32106888888889"
                   placeholder="114.845308°"
                 />
               </div>
@@ -136,7 +148,7 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="fcalamat" class="form-label">alamat</label>
+            <label for="fcalamat" class="form-label">Alamat</label>
             <input
               type="text"
               name="alamat"
@@ -149,25 +161,17 @@
           <div class="mb-3">
             <label for="fc4" class="form-label">Tanggal dan Jam</label>
             <input
-              type="text"
+              type="datetime-local"
               name="waktu"
               class="form-control input-form"
               id="fc4"
-              placeholder="09/07/24 11:34 AM GMT +08:00"
             />
           </div>
           <div class="mb-3">
             <label for="formFile" class="form-label">File Gambar</label>
             <input class="form-control" type="file" id="formFile" />
           </div>
-          <div class="mb-3 d-none">
-            <label for="formFile" class="form-label">File Map</label>
-            <input class="form-control" type="file" id="formFile2" />
-          </div>
           <div class="mb-3">
-            <!-- <button id="btn-download" type="button" class="btn btn-primary">
-              Download
-            </button> -->
             <button id="btn-download2" type="button" class="btn btn-primary">
               Download
             </button>
@@ -183,14 +187,8 @@
               <img src="./google-logo.png" class="google-logo" />
 
               <div class="description-gps">
-                <span id="title" class="title"
-                  >Kecamatan Banjarbaru Selatan, Kalimantan Selatan,
-                  Indonesia</span
-                >
-                <span id="alamat" class="text-description"
-                  >HR4W+268, Loktabat Sel., Kec. Banjarbaru Selatan, Kota
-                  Banjarbaru, Kalimantan Selatan 70714, Indonesia</span
-                >
+                <span id="title" class="title">{Judul}</span>
+                <span id="alamat" class="text-description">{alamat}</span>
                 <span class="text-description"
                   >Lat <span id="lat">-3.445356</span>°</span
                 >
@@ -213,6 +211,7 @@
     ></script>
     <script src="./dist/dom-to-image.js"></script>
     <script src="./dist/html2canvas.min.js"></script>
+    <script src="./dist/piexif.js"></script>
 
     <script
       src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -222,8 +221,63 @@
 
     <script>
       const apiKey = "AIzaSyC8KjrYrb4xieDHjBSOckEcyWv-yakIzXE";
-      var map;
-      var marker;
+      let defaultExif = {
+        "0th": {
+          256: 3264,
+          257: 2448,
+          271: "samsung",
+          272: "SM-A715F",
+          274: 1,
+          305: "Timestamp Camera",
+          306: "2024:10:19 15:38:51",
+          34665: 176,
+          34853: 366,
+        },
+        Exif: {
+          33434: [15, 10000],
+          33437: [18000, 10000],
+          34850: 2,
+          34855: 29,
+          36867: "2024:10:19 15:38:51",
+          36868: "2024:10:19 15:38:51",
+          37383: 2,
+          37384: 0,
+          37385: 0,
+          37386: [5230, 1000],
+        },
+        GPS: {
+          1: "S",
+          2: [
+            [2, 1],
+            [33, 1],
+            [39319, 1000],
+          ],
+          3: "E",
+          4: [
+            [115, 1],
+            [19, 1],
+            [15848, 1000],
+          ],
+        },
+      };
+      const defaultCoordinate = [51.505, -0.09];
+      var map = L.map("maps", {
+        zoomControl: false,
+        attributionControl: false,
+      }).setView(defaultCoordinate, 16);
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 18,
+        }
+      ).addTo(map);
+      var greenIcon = L.icon({
+        iconUrl: "marker.png",
+        iconSize: [25, 41], // size of the icon
+        iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
+      });
+      var marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
+
       function readURL(input, target) {
         if (input.files && input.files[0]) {
           var reader = new FileReader();
@@ -233,63 +287,100 @@
           reader.readAsDataURL(input.files[0]);
         }
       }
-      async function initMap() {
-        const position = new google.maps.LatLng(51.508742, -0.12085);
-        var mapProp = {
-          center: position,
-          zoom: 15,
-          mapTypeId: "satellite",
-          mapId: "PREVIEW_MAP",
-          disableDefaultUI: true,
+
+      function decimalToDMSExif(lat, lon) {
+        function toDMS(decimal, isLatitude) {
+          const isNegative = decimal < 0;
+          decimal = Math.abs(decimal);
+
+          const degrees = Math.floor(decimal);
+          const minutesDecimal = (decimal - degrees) * 60;
+          const minutes = Math.floor(minutesDecimal);
+          const seconds = (minutesDecimal - minutes) * 60;
+
+          return {
+            degrees: degrees,
+            minutes: minutes,
+            seconds: seconds.toFixed(3),
+            direction: isLatitude
+              ? isNegative
+                ? "S"
+                : "N"
+              : isNegative
+              ? "W"
+              : "E",
+          };
+        }
+
+        const latDMS = toDMS(lat, true);
+        const lonDMS = toDMS(lon, false);
+
+        const exif = {
+          1: latDMS.direction,
+          2: [
+            [latDMS.degrees, 1],
+            [latDMS.minutes, 1],
+            [latDMS.seconds * 1000, 1000],
+          ],
+          3: lonDMS.direction,
+          4: [
+            [lonDMS.degrees, 1],
+            [lonDMS.minutes, 1],
+            [lonDMS.seconds * 1000, 1000],
+          ],
         };
 
-        map = new google.maps.Map(document.getElementById("maps"), mapProp);
-        marker = new google.maps.marker.AdvancedMarkerElement({
-          map,
-          position: position,
-          // title: "Uluru",
-        });
-        setTimeout(() => {
-          hideInfo();
-        }, 500);
+        return {
+          exif: exif,
+          latitude: `${latDMS.degrees}° ${latDMS.minutes}' ${latDMS.seconds}" ${latDMS.direction}`,
+          longitude: `${lonDMS.degrees}° ${lonDMS.minutes}' ${lonDMS.seconds}" ${lonDMS.direction}`,
+        };
       }
-      function hideInfo() {
-        $(".maps").find(".gmnoprint").parent().hide();
-        $(".maps").find("a").hide();
-      }
+
       $(() => {
         $("#btn-position").click(function () {
           const lat = $("input[name='lat']").val();
           const long = $("input[name='long']").val();
-          const position = new google.maps.LatLng(lat, long);
           fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}&language=id`
+            `https://geocode.maps.co/reverse?lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
           )
             .then((res) => {
               return res.json();
             })
             .then((jsonValue) => {
-              console.log(jsonValue);
-
-              const alamat = jsonValue.results.at(0).formatted_address;
-              $("#fcalamat").val(alamat);
+              $("#fcalamat").val(jsonValue.display_name);
               $("#fcalamat").change();
-              $("#alamat").html(alamat);
+              $("#alamat").html(jsonValue.display_name);
             });
-          map.setCenter(position);
-          marker.position = position;
+          const dms = decimalToDMSExif(lat, long);
+          defaultExif.GPS = dms.exif;
+          map.setView([lat, long]);
+          marker.setLatLng([lat, long]);
+        });
+        $("#fc4").change(function () {
+          const value = $(this).val();
+          const name = $(this).attr("name");
+          const date = new Date(value);
+          $(`#${name}`).html(
+            `${date.toLocaleString("id-ID", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            })} ${date.toLocaleTimeString("en-EN", {
+              hour12: true,
+              hour: "2-digit",
+              minute: "2-digit",
+            })} GMT +08:00`
+          );
         });
         $(".input-form").keyup(function () {
           const value = $(this).val();
-          console.log(value);
           const name = $(this).attr("name");
+          console.log(value);
           $(`#${name}`).html(value);
         });
         $("#formFile").change(function () {
           readURL(this, ".container-gps");
-        });
-        $("#formFile2").change(function () {
-          readURL(this, ".maps");
         });
         $("#btn-download2").click(function () {
           const domNode = document.getElementById("preview");
@@ -300,7 +391,9 @@
           }).then(function (canvas) {
             var link = document.createElement("a");
             link.download = "edit-gps.jpg";
-            link.href = canvas.toDataURL("image/png");
+            const imageData = canvas.toDataURL("image/jpeg");
+            const exif = piexif.dump(defaultExif);
+            link.href = piexif.insert(exif, imageData);
             link.click();
           });
         });
@@ -330,10 +423,5 @@
         });
       });
     </script>
-    <script
-      async
-      crossorigin="anonymous"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8KjrYrb4xieDHjBSOckEcyWv-yakIzXE&loading=async&callback=initMap&libraries=marker"
-    ></script>
   </body>
 </html>
