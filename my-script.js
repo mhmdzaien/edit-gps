@@ -37,6 +37,7 @@ let defaultExif = {
     ],
   },
 };
+let scale = 3;
 const defaultCoordinate = [51.505, -0.09];
 var map = L.map("maps", {
   zoomControl: false,
@@ -54,11 +55,25 @@ var greenIcon = L.icon({
   iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
 });
 var marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
-
+let cropperData;
 function readURL(input, target) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function (e) {
+      let image = new Image();
+      image.src = e.target.result;
+      image.onload = function () {
+        scale = this.width / 1024;
+        console.log(scale);
+      };
+      $("#base-image").attr("src", e.target.result);
+      $("#base-image").cropper({
+        aspectRatio: 4 / 3,
+        viewMode: 1,
+        minContainerWidth: 1024,
+        minContainerHeight: 768,
+      });
+      cropperData = $("#base-image").data("cropper");
       $(target).css("background-image", "url(" + e.target.result + ")");
     };
     reader.readAsDataURL(input.files[0]);
@@ -167,7 +182,6 @@ $(() => {
   });
   $("#btn-download").click(function () {
     const domNode = document.getElementById("preview");
-    const scale = 3;
     html2canvas(domNode, {
       useCORS: true,
       scale: scale,
@@ -179,5 +193,11 @@ $(() => {
       link.href = piexif.insert(exif, imageData);
       link.click();
     });
+  });
+  $("#btn-crop").click(function () {
+    $(".container-gps").css(
+      "background-image",
+      "url(" + cropperData.getCroppedCanvas().toDataURL("image/jpeg") + ")"
+    );
   });
 });

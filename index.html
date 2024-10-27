@@ -23,12 +23,17 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+      integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <title>Edit GPS Map</title>
     <style>
       .container-gps {
         border: 1px solid;
-        aspect-ratio: 4/3;
         width: 1024px;
         height: 768px;
         background-size: cover;
@@ -164,6 +169,14 @@
             <button id="btn-download" type="button" class="btn btn-primary">
               Download
             </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              Crop Gambar
+            </button>
           </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -174,7 +187,6 @@
             <div class="description">
               <div id="maps" class="maps"></div>
               <img src="./assets/google-logo.png" class="google-logo" />
-
               <div class="description-gps">
                 <span id="title" class="title">{Judul}</span>
                 <span id="alamat" class="text-description">{alamat}</span>
@@ -187,6 +199,47 @@
                 <span id="waktu" class="text-description"
                   >09/07/24 11:34 AM GMT +08:00</span
                 >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crop Gambar</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body d-flex justify-content-center">
+                <img id="base-image" class="img" />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Tutup
+                </button>
+                <button
+                  id="btn-crop"
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                >
+                  Simpan
+                </button>
               </div>
             </div>
           </div>
@@ -206,6 +259,18 @@
       src="https://code.jquery.com/jquery-3.7.1.min.js"
       integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
       crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"
+      integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.min.js"
+      integrity="sha512-V8cSoC5qfk40d43a+VhrTEPf8G9dfWlEJgvLSiq2T2BmgGRmZzB8dGe7XAABQrWj3sEfrR5xjYICTY4eJr76QQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     ></script>
     <script src="./my-script.js"></script>
   </body>
