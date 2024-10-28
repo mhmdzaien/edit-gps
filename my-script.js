@@ -71,8 +71,8 @@ function readURL(input, target) {
       $("#base-image").cropper({
         aspectRatio: 4 / 3,
         viewMode: 1,
-        minContainerWidth: 1024,
-        minContainerHeight: 768,
+        minContainerWidth: 1024 / 2,
+        minContainerHeight: 768 / 2,
       });
       cropperData = $("#base-image").data("cropper");
       $(target).css("background-image", "url(" + e.target.result + ")");
