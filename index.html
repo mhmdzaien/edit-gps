@@ -4,7 +4,16 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Solusi geotagging untuk meningkatkan akurasi lokasi pada foto anda. Temukan fitur untuk menyesuaikan geotag pada foto"
+    />
+    <meta
+      name="keywords"
+      content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo edit"
+    />
 
+    <meta name="robots" content="index, follow" />
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -179,7 +188,7 @@
           </div>
         </div>
         <div class="col-md-12 mb-3">
-          <div id="preview" class="container-gps">
+          <div id="preview" class="container-gps d-none">
             <div class="logo">
               <img src="./assets/logo.png" class="img-logo" /> GPS Map Camera
             </div>
@@ -272,5 +281,11 @@
       referrerpolicy="no-referrer"
     ></script>
     <script src="./my-script.js"></script>
+    <script>
+      console.log(window.screen.width / 1024);
+      document.getElementById("preview").style = `scale: ${
+        window.screen.width / 1024
+      }`;
+    </script>
   </body>
 </html>
