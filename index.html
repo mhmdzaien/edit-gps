@@ -10,7 +10,7 @@
     />
     <meta
       name="keywords"
-      content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo"
+      content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo,edit foto"
     />
 
     <meta name="robots" content="index, follow" />
@@ -50,32 +50,28 @@
         position: relative;
       }
       .description {
-        margin: 0 24px;
         position: absolute;
-        bottom: 19px;
+        bottom: 0px;
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
         font-family: Arial, Helvetica, sans-serif;
+        width: 100%;
       }
       .description-gps {
         display: flex;
-        height: 192px;
         flex-direction: column;
-        background-color: rgba(0, 0, 0, 0.75);
+        justify-content: end;
         color: #fff;
-        margin-left: 18px;
-        width: 764px;
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        padding: 15px 17px;
+
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        padding: 0px 10px;
         line-height: 28px;
+        text-align: right;
       }
       .maps {
-        border-radius: 5px;
         width: 192px;
         height: 192px;
-        background-color: rgba(0, 0, 0, 0.75);
         background-size: cover;
       }
       .title {
@@ -157,7 +153,7 @@
               name="alamat"
               class="form-control input-form"
               id="fcalamat"
-              placeholder=""
+              placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
             />
           </div>
           <div class="mb-3">
@@ -189,27 +185,21 @@
         </div>
         <div class="col-md-12 mb-3">
           <div id="preview" class="container-gps">
-            <div class="logo">
-              <img src="./assets/logo.png" class="img-logo" /> GPS Map Camera
-            </div>
             <div class="description">
               <div id="maps" class="maps"></div>
               <img src="./assets/google-logo.png" class="google-logo" />
               <div class="description-gps">
-                <span id="title" class="title">{Judul}</span>
-                <span id="alamat" class="text-description">{alamat}</span>
+                <span id="waktu" class="text-description">{time}</span>
                 <span>
                   <span class="text-description"
-                    >Lat <span id="lat">{latitude}</span>°</span
+                    ><span id="lat">{latitude}</span></span
                   >
                   <span class="text-description"
-                    >Long <span id="long">{longitude}</span>°</span
+                    ><span id="long">{longitude}</span></span
                   >
                 </span>
-
-                <span id="waktu" class="text-description"
-                  >09/07/24 11:34 AM GMT +08:00</span
-                >
+                <span id="alamat" class="text-description">{alamat}</span>
+                <span id="title" class="text-description"></span>
               </div>
             </div>
           </div>
@@ -285,7 +275,6 @@
     ></script>
     <script src="./my-script.js"></script>
     <script>
-      console.log(window.screen.width / 1024);
       const scaleC = window.screen.width / 1024;
       if (scaleC < 1) {
         document.getElementById("preview").style = `scale: ${scaleC}`;

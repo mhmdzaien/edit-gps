@@ -66,17 +66,24 @@ function readURL(input, target) {
       image.onload = function () {
         scale = this.width / 1024;
         console.log(scale);
+        let width = 1024;
+        let height = 768;
+        if (this.width < this.height) {
+          width = 768;
+          height = 1024;
+        }
+        $(".container-gps").width(`${width}px`);
+        $(".container-gps").height(`${height}px`);
+        $("#base-image").cropper("destroy");
+        $("#base-image").attr("src", e.target.result);
+        $("#base-image").cropper({
+          viewMode: 1,
+          minContainerWidth: width / 2,
+          minContainerHeight: height / 2,
+        });
+        cropperData = $("#base-image").data("cropper");
+        $(target).css("background-image", "url(" + e.target.result + ")");
       };
-      $("#base-image").cropper("destroy");
-      $("#base-image").attr("src", e.target.result);
-      $("#base-image").cropper({
-        aspectRatio: 4 / 3,
-        viewMode: 1,
-        minContainerWidth: 1024 / 2,
-        minContainerHeight: 768 / 2,
-      });
-      cropperData = $("#base-image").data("cropper");
-      $(target).css("background-image", "url(" + e.target.result + ")");
     };
     reader.readAsDataURL(input.files[0]);
   }
@@ -139,15 +146,17 @@ $(() => {
     $("#lat").html(lat);
     $("#long").html(long);
     fetch(
-      `https://geocode.maps.co/reverse?lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
+      `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
     )
       .then((res) => {
         return res.json();
       })
       .then((jsonValue) => {
-        $("#fcalamat").val(jsonValue.display_name);
+        const { road, village, county, state } = jsonValue.address;
+        let address = `${road ?? ""} ${village}, ${county}, ${state}`;
+        $("#fcalamat").val(address);
         $("#fcalamat").change();
-        $("#alamat").html(jsonValue.display_name);
+        $("#alamat").html(address.replaceAll(",", "<br/>"));
       })
       .finally(() => {
         $(this).children(".spinner-border").remove();
@@ -165,19 +174,24 @@ $(() => {
     $(`#${name}`).html(
       `${date.toLocaleString("id-ID", {
         day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
+        month: "short",
+        year: "numeric",
       })} ${date.toLocaleTimeString("en-EN", {
-        hour12: true,
+        hour12: false,
         hour: "2-digit",
         minute: "2-digit",
-      })} GMT +08:00`
+        second: "2-digit",
+      })}`
     );
   });
   $(".input-form").keyup(function () {
     const value = $(this).val();
     const name = $(this).attr("name");
-    $(`#${name}`).html(value);
+    if (name === "alamat") {
+      $(`#${name}`).html(value.replaceAll(",", "<br/>"));
+    } else {
+      $(`#${name}`).html(value);
+    }
   });
   $("#formFile").change(function () {
     readURL(this, ".container-gps");
