@@ -48,6 +48,7 @@
   .toolbar {
     width: 350px;
     background: #eeeeee;
+    overflow-y: auto;
   }
 
   .toolbar-item {
@@ -149,13 +150,13 @@
     </div>
     <div class="toolbar-item">
       <label class="tool-label" for="alamat">Alamat</label>
-      <input
+      <textarea
         type="text"
         name="alamat"
         class="form-control tool-input"
         id="alamat"
         placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
-      />
+      ></textarea>
     </div>
     <div class="toolbar-item">
       <label class="tool-label" for="waktu">Tanggal dan Jam</label>
