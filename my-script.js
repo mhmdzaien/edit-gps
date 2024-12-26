@@ -67,6 +67,7 @@ function readURL(input, target) {
         scale = this.width / 1024;
         console.log(scale);
       };
+      $("#base-image").cropper("destroy");
       $("#base-image").attr("src", e.target.result);
       $("#base-image").cropper({
         aspectRatio: 4 / 3,
