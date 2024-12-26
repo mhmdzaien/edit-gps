@@ -50,8 +50,7 @@ L.tileLayer(
   }
 ).addTo(map);
 var greenIcon = L.icon({
-  iconUrl:
-    window.location.origin + window.location.pathname + "/assets/marker.png",
+  iconUrl: window.location.origin + "/assets/marker.png",
   iconSize: [25, 41], // size of the icon
   iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
 });

@@ -1,284 +1,539 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Solusi geotagging untuk meningkatkan akurasi lokasi pada foto anda. Temukan fitur untuk menyesuaikan geotag pada foto"
-    />
-    <meta
-      name="keywords"
-      content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo,edit foto"
-    />
+<head>
+  <title>Geotag Edit</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"
+  ></script>
+  <script src="/dist/html2canvas.min.js"></script>
+  <script src="./dist/piexif.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"
+    integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 
-    <meta name="robots" content="index, follow" />
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
-      integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <title>Edit GPS Map</title>
-    <style>
-      .container-gps {
-        border: 1px solid;
-        width: 1024px;
-        height: 768px;
-        background-size: cover;
-        background-repeat: no-repeat;
-        position: relative;
-      }
-      .description {
-        position: absolute;
-        bottom: 0px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        font-family: Arial, Helvetica, sans-serif;
-        width: 100%;
-      }
-      .description-gps {
-        display: flex;
-        flex-direction: column;
-        justify-content: end;
-        color: #fff;
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+    integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+  }
 
-        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-        padding: 0px 10px;
-        line-height: 28px;
-        text-align: right;
-      }
-      .maps {
-        width: 192px;
-        height: 192px;
-        background-size: cover;
-      }
-      .title {
-        font-weight: bold;
-        font-size: 24px;
-      }
-      .text-description {
-        font-size: 19px;
-      }
-      .logo {
-        background-color: rgba(0, 0, 0, 0.75);
-        right: 24px;
-        bottom: 211px;
-        padding: 3px 7px;
-        width: 267px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        font-weight: bold;
-        position: absolute;
-        color: #fff;
-        font-size: 25px;
-      }
-      .img-logo {
-        width: 36px;
-      }
-      .google-logo {
-        z-index: 999;
-        position: absolute;
-        left: 5px;
-        bottom: 0px;
-        width: 66px;
-        height: 26px;
-        user-select: none;
-        border: 0px;
-        padding: 0px;
-        margin: 0px;
-      }
-    </style>
-  </head>
-  <body>
-    <section class="container">
-      <div class="row">
-        <div class="col-md-12 mt-2">
-          <div class="mb-3">
-            <label for="fc1" class="form-label">Judul</label>
-            <input
-              type="text"
-              name="title"
-              class="form-control input-form"
-              id="fc1"
-            />
-          </div>
-          <div class="row">
-            <label for="fc2" class="form-label">Latitude, Longitue </label>
+  .editor {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+  }
 
-            <div class="input-group mb-3">
-              <input
-                type="text"
-                name="latLong"
-                class="form-control"
-                placeholder="Contoh : -3.431334, 114.878106"
-                aria-describedby="basic-addon2"
-              />
-              <div class="input-group-append">
-                <button
-                  id="btn-position"
-                  class="btn btn-outline-primary"
-                  type="button"
-                >
-                  Set Posisi
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label for="fcalamat" class="form-label">Alamat</label>
-            <input
-              type="text"
-              name="alamat"
-              class="form-control input-form"
-              id="fcalamat"
-              placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="fc4" class="form-label">Tanggal dan Jam</label>
-            <input
-              type="datetime-local"
-              name="waktu"
-              class="form-control input-form"
-              id="fc4"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="formFile" class="form-label">File Gambar</label>
-            <input class="form-control" type="file" id="formFile" />
-          </div>
-          <div class="mb-3">
-            <button id="btn-download" type="button" class="btn btn-primary">
-              Download
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              Crop Gambar
-            </button>
-          </div>
-        </div>
-        <div class="col-md-12 mb-3">
-          <div id="preview" class="container-gps">
-            <div class="description">
-              <div id="maps" class="maps"></div>
-              <img src="./assets/google-logo.png" class="google-logo" />
-              <div class="description-gps">
-                <span id="waktu" class="text-description">{time}</span>
-                <span>
-                  <span class="text-description"
-                    ><span id="lat">{latitude}</span></span
-                  >
-                  <span class="text-description"
-                    ><span id="long">{longitude}</span></span
-                  >
-                </span>
-                <span id="alamat" class="text-description">{alamat}</span>
-                <span id="title" class="text-description"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Crop Gambar</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body d-flex justify-content-center">
-                <img id="base-image" style="width: 80%" class="img" />
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Tutup
-                </button>
-                <button
-                  id="btn-crop"
-                  type="button"
-                  class="btn btn-primary"
-                  data-bs-dismiss="modal"
-                >
-                  Simpan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+  .toolbar {
+    width: 350px;
+    background: #eeeeee;
+  }
+
+  .toolbar-item {
+    padding: 8px;
+  }
+
+  .tool-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .tool-input {
+    width: 100%;
+  }
+
+  .image-area {
+    flex-grow: 1;
+    padding: 20px;
+    background: #555555;
+  }
+
+  #canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .form-control {
+    width: 100%;
+    min-height: 35px;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+  }
+  #maps {
+    width: 250px;
+    height: 250px;
+  }
+  #maps-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin-bottom: 5px;
+  }
+  .google-logo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  .btn {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.2rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+</style>
+<div class="editor">
+  <div class="toolbar">
+    <div class="toolbar-item">
+      <label class="tool-label" for="imageFileInput">File Gambar</label>
+      <input type="file" id="imageFileInput" />
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label" for="latlong"
+        >Location (Latitude,Longitude)</label
+      >
+      <input
+        id="latlong"
+        type="text"
+        name="koordinat"
+        class="form-control tool-input"
+        placeholder="Contoh : -3.431334, 114.878106"
+        aria-describedby="basic-addon2"
+      />
+      <button id="btn-position" class="btn" type="button">
+        Set Posisi Map
+      </button>
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label" for="alamat">Alamat</label>
+      <input
+        type="text"
+        name="alamat"
+        class="form-control tool-input"
+        id="alamat"
+        placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
+      />
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label" for="waktu">Tanggal dan Jam</label>
+      <input
+        type="datetime-local"
+        name="waktu"
+        class="form-control tool-input"
+        id="waktu"
+      />
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label" for="map-size">
+        Map Size :
+        <span id="valmapSize">300</span>
+      </label>
+      <input
+        class="tool-input"
+        type="range"
+        value="300"
+        id="map-size"
+        name="mapSize"
+        min="0"
+        max="1000"
+      />
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label" for="font-size"
+        >Font Size : <span id="valfontSize">60</span></label
+      >
+      <input
+        class="tool-input"
+        type="range"
+        value="60"
+        name="fontSize"
+        id="font-size"
+        min="0"
+        max="200"
+      />
+    </div>
+    <div class="toolbar-item">
+      <label class="tool-label">Preview Maps</label>
+      <div id="maps-container">
+        <div id="maps" class="maps"></div>
+        <img src="/assets/google-logo.png" class="google-logo" />
       </div>
-    </section>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="./dist/dom-to-image.js"></script>
-    <script src="./dist/html2canvas.min.js"></script>
-    <script src="./dist/piexif.js"></script>
+      <button id="download" onclick="downloadImage()" class="btn" type="button">
+        Download
+      </button>
+      <button id="startCrop" class="btn" type="button">Crop</button>
+      <button
+        id="applyCrop"
+        style="background-color: green"
+        class="btn"
+        type="button"
+      >
+        Terapkan Crop
+      </button>
+    </div>
+  </div>
+  <div class="image-area">
+    <canvas id="canvas" height="500" width="500"></canvas>
+  </div>
+</div>
+<script>
+  const fileInput = document.querySelector("#imageFileInput");
+  const canvas = document.querySelector("#canvas");
+  const canvasCtx = canvas.getContext("2d");
+  const mapSizeInput = document.querySelector("#map-size");
+  const fontSizeInput = document.querySelector("#font-size");
+  const defaultCoordinate = [51.505, -0.09];
+  const greenIcon = L.icon({
+    iconUrl: window.location.origin + "/assets/marker.png",
+    iconSize: [25, 41], // size of the icon
+    iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
+  });
+  const settings = {};
 
-    <script
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"
-      integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cropper/1.0.1/jquery-cropper.min.js"
-      integrity="sha512-V8cSoC5qfk40d43a+VhrTEPf8G9dfWlEJgvLSiq2T2BmgGRmZzB8dGe7XAABQrWj3sEfrR5xjYICTY4eJr76QQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script src="./my-script.js"></script>
-    <script>
-      const scaleC = window.screen.width / 1024;
-      if (scaleC < 1) {
-        document.getElementById("preview").style = `scale: ${scaleC}`;
+  let cropper = null;
+  let originalImage = null;
+  let image = null;
+  let mapImage = null;
+  let map = null;
+  let marker = null;
+  let exif = {
+    "0th": {
+      256: 3264,
+      257: 2448,
+      271: "samsung",
+      272: "SM-A715F",
+      274: 1,
+      305: "Timestamp Camera",
+      306: "2024:10:19 15:38:51",
+      34665: 176,
+      34853: 366,
+    },
+    Exif: {
+      33434: [15, 10000],
+      33437: [18000, 10000],
+      34850: 2,
+      34855: 29,
+      36867: "2024:10:19 15:38:51",
+      36868: "2024:10:19 15:38:51",
+      37383: 2,
+      37384: 0,
+      37385: 0,
+      37386: [5230, 1000],
+    },
+    GPS: {
+      1: "S",
+      2: [
+        [2, 1],
+        [33, 1],
+        [39319, 1000],
+      ],
+      3: "E",
+      4: [
+        [115, 1],
+        [19, 1],
+        [15848, 1000],
+      ],
+    },
+  };
+  renderMap();
+  $("#applyCrop").hide();
+
+  const inputElements = document.getElementsByClassName("tool-input");
+
+  for (var i = 0; i < inputElements.length; i++) {
+    const eventName = ["alamat", "latlong"].includes(inputElements[i].id)
+      ? "keyup"
+      : "change";
+    inputElements[i].addEventListener(eventName, function (event) {
+      if (document.getElementById(`val${event.target.name}`)) {
+        document.getElementById(`val${event.target.name}`).innerText =
+          event.target.value;
       }
-    </script>
-  </body>
-</html>
+      settings[event.target.name] = event.target.value;
+      renderImage();
+    });
+  }
+
+  $("#startCrop").click(function () {
+    canvas.width = originalImage.width;
+    canvas.height = originalImage.height;
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasCtx.drawImage(originalImage, 0, 0);
+    if (!cropper) {
+      cropper = new Cropper(canvas, {
+        viewMode: 1,
+        maxContainerWidth: canvas.width / 10,
+        maxContainerHeight: canvas.height / 10,
+      });
+      $("#startCrop").hide();
+      $("#applyCrop").show();
+    }
+  });
+
+  $("#applyCrop").click(function () {
+    image.src = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+    cropper.destroy();
+    cropper = null;
+    $("#startCrop").show();
+    $("#applyCrop").hide();
+  });
+
+  $("#btn-position").click(function () {
+    $(this).prepend(
+      `<div class="spinner-border spinner-border-sm text-light" role="status"><span class="visually-hidden">Loading...</span></div>`
+    );
+    $(this).attr("disabled", true);
+    const latLong = $("#latlong").val();
+
+    const [lat, long] = latLong
+      .trim()
+      .split(",")
+      .map((item) => item.trim());
+    fetch(
+      `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((jsonValue) => {
+        const { road, village, county, state } = jsonValue.address;
+        let address = `${road ?? ""} ${village}, ${county}, ${state}`;
+        $("#alamat").val(address.trim());
+        renderImage();
+      })
+      .finally(() => {
+        $(this).children(".spinner-border").remove();
+        $(this).removeAttr("disabled");
+      });
+    const dms = decimalToDMSExif(lat, long);
+    exif.GPS = dms.exif;
+    moveMarker(lat, long);
+  });
+
+  function decimalToDMSExif(lat, lon) {
+    function toDMS(decimal, isLatitude) {
+      const isNegative = decimal < 0;
+      decimal = Math.abs(decimal);
+
+      const degrees = Math.floor(decimal);
+      const minutesDecimal = (decimal - degrees) * 60;
+      const minutes = Math.floor(minutesDecimal);
+      const seconds = (minutesDecimal - minutes) * 60;
+
+      return {
+        degrees: degrees,
+        minutes: minutes,
+        seconds: seconds.toFixed(3),
+        direction: isLatitude
+          ? isNegative
+            ? "S"
+            : "N"
+          : isNegative
+          ? "W"
+          : "E",
+      };
+    }
+
+    const latDMS = toDMS(lat, true);
+    const lonDMS = toDMS(lon, false);
+
+    const exif = {
+      1: latDMS.direction,
+      2: [
+        [latDMS.degrees, 1],
+        [latDMS.minutes, 1],
+        [latDMS.seconds * 1000, 1000],
+      ],
+      3: lonDMS.direction,
+      4: [
+        [lonDMS.degrees, 1],
+        [lonDMS.minutes, 1],
+        [lonDMS.seconds * 1000, 1000],
+      ],
+    };
+
+    return {
+      exif: exif,
+      latitude: `${latDMS.degrees}° ${latDMS.minutes}' ${latDMS.seconds}" ${latDMS.direction}`,
+      longitude: `${lonDMS.degrees}° ${lonDMS.minutes}' ${lonDMS.seconds}" ${lonDMS.direction}`,
+    };
+  }
+  function downloadImage() {
+    var link = document.createElement("a");
+    link.download = "Geotag Edit.jpg";
+    const injectExif = piexif.dump(exif);
+    link.href = piexif.insert(injectExif, canvas.toDataURL("image/jpeg"));
+    link.click();
+  }
+
+  function renderMap() {
+    map = L.map("maps", {
+      zoomControl: false,
+      attributionControl: false,
+    }).setView(defaultCoordinate, 16);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        maxZoom: 18,
+      }
+    ).addTo(map);
+    marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
+    moveMarker(defaultCoordinate[0], defaultCoordinate[1]);
+  }
+
+  function moveMarker(lat, long) {
+    map.setView([lat, long]);
+    marker.setLatLng([lat, long]);
+    setTimeout(() => {
+      const domNode = document.getElementById("maps-container");
+      html2canvas(domNode, {
+        useCORS: true,
+      }).then(function (mapCanvas) {
+        mapImage = new Image();
+        mapImage.src = mapCanvas.toDataURL("image/jpeg");
+        mapImage.onload = () => {
+          if (image) {
+            renderImage();
+          }
+        };
+      });
+    }, 500);
+  }
+
+  function resetSettings() {
+    settings.mapSize = "300";
+    settings.fontSize = "60";
+
+    mapSizeInput.value = settings.mapSize;
+    fontSizeInput.value = settings.fontSize;
+  }
+
+  function notEmptyString(text) {
+    return text && text.trim() != "";
+  }
+
+  function renderImage() {
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasCtx.drawImage(image, 0, 0);
+    if (mapImage) {
+      canvasCtx.drawImage(
+        mapImage,
+        0,
+        canvas.height - settings.mapSize,
+        settings.mapSize,
+        settings.mapSize
+      );
+    }
+    renderText();
+  }
+
+  function renderText() {
+    var koordinat = document.getElementById("latlong").value;
+    var alamat = document.getElementById("alamat").value;
+    var waktu = new Date(document.getElementById("waktu").value);
+    var waktuString = `${waktu.toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })} ${waktu.toLocaleTimeString("en-EN", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })}`;
+    let lineHeight = 0;
+    let stringLines = [];
+    if (notEmptyString(alamat)) {
+      alamat
+        .split(",")
+        .reverse()
+        .forEach((item) => {
+          stringLines.push(item);
+        });
+    }
+    if (notEmptyString(koordinat)) {
+      stringLines.push(koordinat);
+    }
+    if (notEmptyString(waktuString)) {
+      stringLines.push(waktuString);
+    }
+    stringLines.forEach((text) => {
+      canvasCtx.font = `bold ${settings.fontSize}px arial`;
+      canvasCtx.fillStyle = "white";
+      canvasCtx.textAlign = "right";
+      canvasCtx.fillText(
+        text,
+        canvas.width - 5,
+        canvas.height - (30 + lineHeight),
+        canvas.width - settings.mapSize - 20
+      );
+      canvasCtx.strokeText(
+        text,
+        canvas.width - 5,
+        canvas.height - (30 + lineHeight),
+        canvas.width - settings.mapSize - 20
+      );
+      lineHeight += Number(settings.fontSize);
+    });
+  }
+
+  fileInput.addEventListener("change", () => {
+    image = new Image();
+    originalImage = new Image();
+    image.addEventListener("load", () => {
+      resetSettings();
+      renderImage();
+    });
+
+    image.src = URL.createObjectURL(fileInput.files[0]);
+    originalImage.src = URL.createObjectURL(fileInput.files[0]);
+  });
+
+  resetSettings();
+</script>
