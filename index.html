@@ -198,12 +198,15 @@
               <div class="description-gps">
                 <span id="title" class="title">{Judul}</span>
                 <span id="alamat" class="text-description">{alamat}</span>
-                <span class="text-description"
-                  >Lat <span id="lat">{latitude}</span>°</span
-                >
-                <span class="text-description"
-                  >Long <span id="long">{longitude}</span>°</span
-                >
+                <span>
+                  <span class="text-description"
+                    >Lat <span id="lat">{latitude}</span>°</span
+                  >
+                  <span class="text-description"
+                    >Long <span id="long">{longitude}</span>°</span
+                  >
+                </span>
+
                 <span id="waktu" class="text-description"
                   >09/07/24 11:34 AM GMT +08:00</span
                 >
@@ -283,9 +286,10 @@
     <script src="./my-script.js"></script>
     <script>
       console.log(window.screen.width / 1024);
-      // document.getElementById("preview").style = `scale: ${
-      //   window.screen.width / 1024
-      // }`;
+      const scaleC = window.screen.width / 1024;
+      if (scaleC < 1) {
+        document.getElementById("preview").style = `scale: ${scaleC}`;
+      }
     </script>
   </body>
 </html>
