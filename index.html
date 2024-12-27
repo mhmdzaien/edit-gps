@@ -449,33 +449,35 @@
       zoomControl: false,
       attributionControl: false,
     }).setView(defaultCoordinate, 16);
-    L.tileLayer(
+    const layer = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
         maxZoom: 18,
       }
     ).addTo(map);
+    map.on("moveend", function () {
+      setTimeout(() => {
+        const domNode = document.getElementById("maps-container");
+        html2canvas(domNode, {
+          useCORS: true,
+        }).then(function (mapCanvas) {
+          mapImage = new Image();
+          mapImage.src = mapCanvas.toDataURL("image/jpeg");
+          mapImage.onload = () => {
+            if (image) {
+              renderImage();
+            }
+          };
+        });
+      }, 1000);
+    });
     marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
     moveMarker(defaultCoordinate[0], defaultCoordinate[1]);
   }
 
   function moveMarker(lat, long) {
-    map.setView([lat, long]);
     marker.setLatLng([lat, long]);
-    setTimeout(() => {
-      const domNode = document.getElementById("maps-container");
-      html2canvas(domNode, {
-        useCORS: true,
-      }).then(function (mapCanvas) {
-        mapImage = new Image();
-        mapImage.src = mapCanvas.toDataURL("image/jpeg");
-        mapImage.onload = () => {
-          if (image) {
-            renderImage();
-          }
-        };
-      });
-    }, 500);
+    map.setView([lat, long]);
   }
 
   function resetSettings() {
