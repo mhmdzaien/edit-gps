@@ -80,7 +80,6 @@
     padding: 20px;
     background: #555555;
   }
-
   #canvas {
     max-width: 100%;
     max-height: 100%;
@@ -134,11 +133,15 @@
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
       border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
 </style>
 <div class="editor">
   <div class="toolbar">
     <div class="toolbar-item">
-       <button id="download" onclick="downloadImage()" class="btn" type="button">
+      <button id="download" onclick="downloadImage()" class="btn" type="button">
         Download
       </button>
       <button id="startCrop" class="btn" type="button">Crop</button>
@@ -150,6 +153,8 @@
       >
         Terapkan Crop
       </button>
+    </div>
+    <div class="toolbar-item">
       <label class="tool-label" for="imageFileInput">File Gambar</label>
       <input type="file" id="imageFileInput" />
     </div>
@@ -157,17 +162,24 @@
       <label class="tool-label" for="latlong"
         >Location (Latitude,Longitude)</label
       >
-      <input
-        id="latlong"
-        type="text"
-        name="koordinat"
-        class="form-control tool-input"
-        placeholder="Contoh : -3.431334, 114.878106"
-        aria-describedby="basic-addon2"
-      />
-      <button id="btn-position" class="btn" type="button">
-        Set Posisi Map
-      </button>
+      <div class="row">
+        <input
+          id="latlong"
+          type="text"
+          name="koordinat"
+          class="form-control tool-input"
+          placeholder="Contoh : -3.431334, 114.878106"
+          aria-describedby="basic-addon2"
+        />
+        <button
+          id="btn-position"
+          style="min-width: 86px"
+          class="btn"
+          type="button"
+        >
+          Set Map
+        </button>
+      </div>
     </div>
     <div class="toolbar-item">
       <label class="tool-label" for="alamat">Alamat</label>
@@ -312,6 +324,7 @@
     canvas.height = originalImage.height;
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     canvasCtx.drawImage(originalImage, 0, 0);
+    $(".image-area").css("padding", "0px");
     if (!cropper) {
       cropper = new Cropper(canvas, {
         viewMode: 1,
@@ -329,6 +342,7 @@
     cropper = null;
     $("#startCrop").show();
     $("#applyCrop").hide();
+    $(".image-area").css("padding", "20px");
   });
 
   $("#btn-position").click(function () {
