@@ -137,6 +137,18 @@
 <div class="editor">
   <div class="toolbar">
     <div class="toolbar-item">
+       <button id="download" onclick="downloadImage()" class="btn" type="button">
+        Download
+      </button>
+      <button id="startCrop" class="btn" type="button">Crop</button>
+      <button
+        id="applyCrop"
+        style="background-color: green"
+        class="btn"
+        type="button"
+      >
+        Terapkan Crop
+      </button>
       <label class="tool-label" for="imageFileInput">File Gambar</label>
       <input type="file" id="imageFileInput" />
     </div>
@@ -210,18 +222,6 @@
         <div id="maps" class="maps"></div>
         <img src="/assets/google-logo.png" class="google-logo" />
       </div>
-      <button id="download" onclick="downloadImage()" class="btn" type="button">
-        Download
-      </button>
-      <button id="startCrop" class="btn" type="button">Crop</button>
-      <button
-        id="applyCrop"
-        style="background-color: green"
-        class="btn"
-        type="button"
-      >
-        Terapkan Crop
-      </button>
     </div>
   </div>
   <div class="image-area">
