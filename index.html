@@ -29,11 +29,15 @@
     margin: 0;
     font-family: sans-serif;
   }
-
+  .ads {
+    width: 100vw;
+    height: 10vh;
+    background-color: #0d6efd;
+  }
   .editor {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: 90vh;
   }
 
   .toolbar {
@@ -126,112 +130,121 @@
     text-align: center;
   }
 </style>
-<div class="editor">
-  <div class="toolbar">
-    <div class="toolbar-item">
-      <button id="download" onclick="downloadImage()" class="btn" type="button">
-        Download
-      </button>
-      <button id="startCrop" class="btn" type="button">Crop</button>
-      <button
-        id="applyCrop"
-        style="background-color: green"
-        class="btn"
-        type="button"
-      >
-        Terapkan Crop
-      </button>
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="imageFileInput">File Gambar</label>
-      <input type="file" id="imageFileInput" />
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="latlong"
-        >Location (Latitude,Longitude)</label
-      >
-      <div class="row">
-        <input
-          id="latlong"
-          type="text"
-          name="koordinat"
-          class="form-control tool-input"
-          placeholder="Contoh : -3.431334, 114.878106"
-          aria-describedby="basic-addon2"
-        />
+<body>
+  <div class="ads"></div>
+  <div class="editor">
+    <div class="toolbar">
+      <div class="toolbar-item">
         <button
-          id="btn-position"
-          style="min-width: 86px"
+          id="download"
+          onclick="downloadImage()"
           class="btn"
           type="button"
         >
-          Set Map
+          Download
+        </button>
+        <button id="startCrop" class="btn" type="button">Crop</button>
+        <button
+          id="applyCrop"
+          style="background-color: green"
+          class="btn"
+          type="button"
+        >
+          Terapkan Crop
         </button>
       </div>
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="alamat">Alamat</label>
-      <textarea
-        type="text"
-        name="alamat"
-        class="form-control tool-input"
-        id="alamat"
-        placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
-      ></textarea>
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="waktu">Tanggal dan Jam</label>
-      <input
-        type="datetime-local"
-        name="waktu"
-        class="form-control tool-input"
-        id="waktu"
-      />
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="map-size">
-        Map Size :
-        <span id="valmapSize">300</span>
-      </label>
-      <input
-        class="tool-input"
-        type="range"
-        value="300"
-        id="map-size"
-        name="mapSize"
-        min="0"
-        max="1000"
-      />
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label" for="font-size"
-        >Font Size : <span id="valfontSize">60</span></label
-      >
-      <input
-        class="tool-input"
-        type="range"
-        value="60"
-        name="fontSize"
-        id="font-size"
-        min="0"
-        max="200"
-      />
-    </div>
-    <div class="toolbar-item">
-      <label class="tool-label">Preview Maps</label>
-      <div id="maps-container">
-        <div id="maps" class="maps"></div>
-        <img src="/assets/google-logo.png" class="google-logo" />
+      <div class="toolbar-item">
+        <label class="tool-label" for="imageFileInput">File Gambar</label>
+        <input type="file" id="imageFileInput" />
       </div>
+      <div class="toolbar-item">
+        <label class="tool-label" for="latlong"
+          >Location (Latitude,Longitude)</label
+        >
+        <div class="row">
+          <input
+            id="latlong"
+            type="text"
+            name="koordinat"
+            class="form-control tool-input"
+            placeholder="Contoh : -3.431334, 114.878106"
+            aria-describedby="basic-addon2"
+          />
+          <button
+            id="btn-position"
+            style="min-width: 86px"
+            class="btn"
+            type="button"
+          >
+            Set Map
+          </button>
+        </div>
+      </div>
+      <div class="toolbar-item">
+        <label class="tool-label" for="alamat">Alamat</label>
+        <textarea
+          type="text"
+          name="alamat"
+          class="form-control tool-input"
+          id="alamat"
+          placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
+        ></textarea>
+      </div>
+      <div class="toolbar-item">
+        <label class="tool-label" for="waktu">Tanggal dan Jam</label>
+        <input
+          type="datetime-local"
+          name="waktu"
+          class="form-control tool-input"
+          id="waktu"
+        />
+      </div>
+      <div class="toolbar-item">
+        <label class="tool-label" for="map-size">
+          Map Size :
+          <span id="valmapSize">300</span>
+        </label>
+        <input
+          class="tool-input"
+          type="range"
+          value="300"
+          id="map-size"
+          name="mapSize"
+          min="0"
+          max="1000"
+        />
+      </div>
+      <div class="toolbar-item">
+        <label class="tool-label" for="font-size"
+          >Font Size : <span id="valfontSize">60</span></label
+        >
+        <input
+          class="tool-input"
+          type="range"
+          value="60"
+          name="fontSize"
+          id="font-size"
+          min="0"
+          max="200"
+        />
+      </div>
+      <div class="toolbar-item">
+        <label class="tool-label">Preview Maps</label>
+        <div id="maps-container">
+          <div id="maps" class="maps"></div>
+          <img src="/assets/google-logo.png" class="google-logo" />
+        </div>
+      </div>
+      <p class="copyright">
+        Copyright 2024 by <a href="https://mhmdzaien.com">mhmdzaien</a>
+      </p>
     </div>
-    <p class="copyright">
-      Copyright 2024 by <a href="https://mhmdzaien.com">mhmdzaien</a>
-    </p>
+    <div class="image-area">
+      <canvas id="canvas" height="500" width="500"></canvas>
+    </div>
   </div>
-  <div class="image-area">
-    <canvas id="canvas" height="500" width="500"></canvas>
-  </div>
-</div>
+</body>
+
 <script>
   const fileInput = document.querySelector("#imageFileInput");
   const canvas = document.querySelector("#canvas");
@@ -493,7 +506,9 @@
   function renderText() {
     var koordinat = document.getElementById("latlong").value;
     var alamat = document.getElementById("alamat").value;
-    var waktu = new Date(document.getElementById("waktu").value);
+    var waktu = document.getElementById("waktu").value
+      ? new Date(document.getElementById("waktu").value)
+      : new Date();
     var waktuString = `${waktu.toLocaleString("id-ID", {
       day: "2-digit",
       month: "short",
