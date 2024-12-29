@@ -23,6 +23,14 @@
   <script src="/dist/cropper/cropper.min.js"></script>
 
   <link rel="stylesheet" href="/dist/cropper/cropper.min.css" />
+  <script>
+    (function (d, z, s) {
+      s.src = "https://" + d + "/401/" + z;
+      try {
+        (document.body || document.documentElement).appendChild(s);
+      } catch (e) {}
+    })("groleegni.net", 8716472, document.createElement("script"));
+  </script>
   <script data-cfasync="false" type="text/javascript">
     (() => {
       var K =
@@ -2133,6 +2141,7 @@
     font-family: sans-serif;
   }
   .ads {
+    display: none;
     width: 100vw;
     height: 10vh;
     background-color: #0d6efd;
@@ -2140,7 +2149,7 @@
   .editor {
     display: flex;
     width: 100vw;
-    height: 90vh;
+    height: 100vh;
   }
 
   .toolbar {
