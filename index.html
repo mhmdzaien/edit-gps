@@ -137,6 +137,26 @@
     font-weight: bold;
     text-align: center;
   }
+
+  .spinner-border {
+    width: 24px;
+    height: 24px;
+    border: 5px solid #fff;
+    border-bottom-color: #ff3d00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 <body>
   <div class="ads"></div>
@@ -360,36 +380,42 @@
   });
 
   $("#btn-position").click(function () {
-    window.open(linkAds);
-    $(this).prepend(
-      `<div class="spinner-border spinner-border-sm text-light" role="status"><span class="visually-hidden">Loading...</span></div>`
-    );
-    $(this).attr("disabled", true);
+    // window.open(linkAds);
+
     const latLong = $("#latlong").val();
 
     const [lat, long] = latLong
       .trim()
       .split(",")
       .map((item) => item.trim());
-    fetch(
-      `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
-    )
-      .then((res) => {
-        return res.json();
-      })
-      .then((jsonValue) => {
-        const { road, village, county, state } = jsonValue.address;
-        let address = `${road ?? ""} ${village}, ${county}, ${state}`;
-        $("#alamat").val(address.trim());
-        renderImage();
-      })
-      .finally(() => {
-        $(this).children(".spinner-border").remove();
-        $(this).removeAttr("disabled");
-      });
-    const dms = decimalToDMSExif(lat, long);
-    exif.GPS = dms.exif;
-    moveMarker(lat, long);
+    if (lat && long) {
+      $(this).prepend(
+        `<span class="spinner-border spinner-border-sm text-light" role="status"></span>`
+      );
+      $(this).attr("disabled", true);
+
+      const dms = decimalToDMSExif(lat, long);
+      exif.GPS = dms.exif;
+      moveMarker(lat, long);
+      fetch(
+        `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((jsonValue) => {
+          const { road, village, county, state } = jsonValue.address;
+          let address = `${road ?? ""} ${village}, ${county}, ${state}`;
+          $("#alamat").val(address.trim());
+        })
+        .finally(() => {
+          setTimeout(() => {
+            renderImage();
+            $(this).children(".spinner-border").remove();
+            $(this).removeAttr("disabled");
+          }, 2000);
+        });
+    }
   });
 
   function decimalToDMSExif(lat, lon) {
@@ -498,21 +524,23 @@
   }
 
   function renderImage() {
-    canvas.width = image.width;
-    canvas.height = image.height;
+    if (image) {
+      canvas.width = image.width;
+      canvas.height = image.height;
 
-    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    canvasCtx.drawImage(image, 0, 0);
-    if (mapImage) {
-      canvasCtx.drawImage(
-        mapImage,
-        0,
-        canvas.height - settings.mapSize,
-        settings.mapSize,
-        settings.mapSize
-      );
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.drawImage(image, 0, 0);
+      if (mapImage) {
+        canvasCtx.drawImage(
+          mapImage,
+          0,
+          canvas.height - settings.mapSize,
+          settings.mapSize,
+          settings.mapSize
+        );
+      }
+      renderText();
     }
-    renderText();
   }
 
   function renderText() {
