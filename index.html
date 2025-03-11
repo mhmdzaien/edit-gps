@@ -411,7 +411,7 @@
         .finally(() => {
           setTimeout(() => {
             $("#alamat").val(address.trim());
-            $("#alamat").change();
+            renderImage();
             $(this).children(".spinner-border").remove();
             $(this).removeAttr("disabled");
             $(this).html("Set Map")
