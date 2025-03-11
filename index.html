@@ -381,7 +381,7 @@
 
   $("#btn-position").click(function () {
     window.open(linkAds);
-
+    let address = "";
     const latLong = $("#latlong").val();
 
     const [lat, long] = latLong
@@ -405,12 +405,12 @@
         })
         .then((jsonValue) => {
           const { road, village, county, state } = jsonValue.address;
-          let address = `${road ?? ""} ${village}, ${county}, ${state}`;
-          $("#alamat").val(address.trim());
+          address = `${road ?? ""} ${village}, ${county}, ${state}`;
         })
         .finally(() => {
           setTimeout(() => {
-            renderImage();
+            $("#alamat").val(address.trim());
+            //renderImage();
             $(this).children(".spinner-border").remove();
             $(this).removeAttr("disabled");
           }, 2000);
