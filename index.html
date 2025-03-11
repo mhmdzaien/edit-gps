@@ -389,6 +389,7 @@
       .split(",")
       .map((item) => item.trim());
     if (lat && long) {
+      $(this).html("")
       $(this).prepend(
         `<span class="spinner-border spinner-border-sm text-light" role="status"></span>`
       );
@@ -413,7 +414,8 @@
             //renderImage();
             $(this).children(".spinner-border").remove();
             $(this).removeAttr("disabled");
-          }, 2000);
+            $(this).html("Set Map")
+          }, 3000);
         });
     }
   });
