@@ -1,614 +1,1376 @@
-<head>
-  <title>Geotag Edit</title>
-  <meta
-    name="description"
-    content="Solusi geotagging untuk meningkatkan akurasi lokasi pada foto anda. Temukan fitur untuk menyesuaikan geotag pada foto"
-  />
-  <meta
-    name="keywords"
-    content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo,edit foto"
-  />
-  <meta name="monetag" content="ae9e576d7ed060e8fed742450b3f0998">
-  <link rel="manifest" href="manifest.json" />
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geotag Edit</title>
+    <meta
+      name="description"
+      content="Solusi geotagging untuk meningkatkan akurasi lokasi pada foto anda. Temukan fitur untuk menyesuaikan geotag pada foto"
+    />
+    <meta
+      name="keywords"
+      content="geotagging, lokasi, peta, geospasial, data lokasi, pengelolaan lokasi, teknologi geotag,foto,photo,edit foto"
+    />
+    <meta name="monetag" content="ae9e576d7ed060e8fed742450b3f0998" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico" />
+    <link rel="stylesheet" href="./dist/leaflet/leaflet.css" />
+    <script src="./dist/leaflet/leaflet.js"></script>
+    <script
+      src="./dist/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./dist/html2canvas.min.js"></script>
+    <script src="./dist/piexif.js"></script>
+    <script src="./dist/cropper/cropper.min.js"></script>
+    <script>
+      (function (d, z, s) {
+        s.src = "https://" + d + "/401/" + z;
+        try {
+          (document.body || document.documentElement).appendChild(s);
+        } catch (e) {}
+      })("groleegni.net", 8716472, document.createElement("script"));
+    </script>
+    <link rel="stylesheet" href="./dist/cropper/cropper.min.css" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      .ads {
+        display: none;
+        width: 100vw;
+        height: 10vh;
+        background-color: #0d6efd;
+      }
+      .editor {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+      }
 
-  <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico" />
-  <link rel="stylesheet" href="/dist/leaflet/leaflet.css" />
-  <script src="/dist/leaflet/leaflet.js"></script>
-  <script
-    src="/dist/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-    crossorigin="anonymous"
-  ></script>
-  <script src="/dist/html2canvas.min.js"></script>
-  <script src="./dist/piexif.js"></script>
-  <script src="/dist/cropper/cropper.min.js"></script>
-  <script>
-    (function (d, z, s) {
-      s.src = "https://" + d + "/401/" + z;
-      try {
-        (document.body || document.documentElement).appendChild(s);
-      } catch (e) {}
-    })("groleegni.net", 8716472, document.createElement("script"));
-  </script>
-  <link rel="stylesheet" href="/dist/cropper/cropper.min.css" />
-</head>
-<style>
-  body {
-    margin: 0;
-    font-family: sans-serif;
-  }
-  .ads {
-    display: none;
-    width: 100vw;
-    height: 10vh;
-    background-color: #0d6efd;
-  }
-  .editor {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-  }
+      .toolbar {
+        width: 350px;
+        background: #eeeeee;
+        overflow-y: auto;
+      }
 
-  .toolbar {
-    width: 350px;
-    background: #eeeeee;
-    overflow-y: auto;
-  }
+      .toolbar-item {
+        padding: 8px;
+      }
 
-  .toolbar-item {
-    padding: 8px;
-  }
+      .tool-label {
+        display: block;
+        margin-bottom: 5px;
+        margin-top: 3px;
+        font-size: 14px;
+        font-weight: bold;
+      }
 
-  .tool-label {
-    display: block;
-    margin-bottom: 5px;
-    margin-top: 3px;
-    font-size: 14px;
-    font-weight: bold;
-  }
+      .tool-input {
+        width: 100%;
+      }
 
-  .tool-input {
-    width: 100%;
-  }
+      .image-area {
+        flex-grow: 1;
+        padding: 20px;
+        background: #555555;
+      }
+      #canvas {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .form-control {
+        width: 100%;
+        min-height: 35px;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        padding: 0.375rem 0.75rem;
+      }
+      /* Input Group (Bootstrap-like) */
+      .input-group {
+        display: flex;
+        position: relative;
+        width: 100%;
+      }
+      .input-group .form-control {
+        flex: 1 1 auto;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+      }
+      .input-group .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        white-space: nowrap;
+      }
+      /* Drop Zone */
+      .drop-zone {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        border: 3px dashed #999;
+        border-radius: 12px;
+        color: #ccc;
+        font-size: 18px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        text-align: center;
+        padding: 20px;
+      }
+      .drop-zone:hover {
+        border-color: #0d6efd;
+        background: rgba(13, 110, 253, 0.05);
+      }
+      .drop-zone.drag-over {
+        border-color: #0d6efd;
+        background: rgba(13, 110, 253, 0.12);
+        color: #0d6efd;
+      }
+      .drop-zone-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+      #maps {
+        width: 200px;
+        height: 200px;
+      }
+      #maps-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin-bottom: 5px;
+      }
+      .google-logo {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+      }
+      .btn {
+        color: #fff;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.2rem 0.75rem;
+        font-size: 1rem;
+        border-radius: 0.25rem;
+        transition:
+          color 0.15s ease-in-out,
+          background-color 0.15s ease-in-out,
+          border-color 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out;
+      }
+      .btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+      .row {
+        display: flex;
+        flex-direction: row;
+      }
+      .copyright {
+        padding: 0px 10px;
+        font-weight: bold;
+        text-align: center;
+      }
 
-  .image-area {
-    flex-grow: 1;
-    padding: 20px;
-    background: #555555;
-  }
-  #canvas {
-    max-width: 100%;
-    max-height: 100%;
-  }
-  .form-control {
-    width: 100%;
-    min-height: 35px;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 0.375rem 0.75rem;
-  }
-  #maps {
-    width: 200px;
-    height: 200px;
-  }
-  #maps-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 5px;
-  }
-  .google-logo {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-  }
-  .btn {
-    color: #fff;
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-    display: inline-block;
-    font-weight: 400;
-    line-height: 1.5;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.2rem 0.75rem;
-    font-size: 1rem;
-    border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-  .copyright {
-    padding: 0px 10px;
-    font-weight: bold;
-    text-align: center;
-  }
+      .spinner-border {
+        width: 24px;
+        height: 24px;
+        border: 5px solid #fff;
+        border-bottom-color: #ff3d00;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+      }
 
-  .spinner-border {
-    width: 24px;
-    height: 24px;
-    border: 5px solid #fff;
-    border-bottom-color: #ff3d00;
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-  }
+      @keyframes rotation {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
 
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-</style>
-<body>
-  <div class="ads"></div>
-  <div class="editor">
-    <div class="toolbar">
-      <div class="toolbar-item">
-        <button
-          id="download"
-          onclick="downloadImage()"
-          class="btn"
-          type="button"
-        >
-          Download
-        </button>
-        <button id="startCrop" class="btn" type="button">Crop</button>
-        <button
-          id="applyCrop"
-          style="background-color: green"
-          class="btn"
-          type="button"
-        >
-          Terapkan Crop
-        </button>
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="imageFileInput">File Gambar</label>
-        <input type="file" id="imageFileInput" />
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="latlong"
-          >Location (Latitude,Longitude)</label
-        >
-        <div class="row">
-          <input
-            id="latlong"
-            type="text"
-            name="koordinat"
-            class="form-control tool-input"
-            placeholder="Contoh : -3.431334, 114.878106"
-            aria-describedby="basic-addon2"
-          />
+      /* Modal Config */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        width: 360px;
+        max-width: 90vw;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+      .modal-box h3 {
+        margin: 0 0 16px 0;
+        font-size: 18px;
+      }
+      .modal-box label {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        margin-top: 12px;
+      }
+      .modal-box input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+      }
+      .btn-success {
+        color: #fff;
+        background-color: #198754;
+        border-color: #198754;
+      }
+      .search-result-item {
+        padding: 8px 10px;
+        cursor: pointer;
+        font-size: 13px;
+        border-bottom: 1px solid #eee;
+      }
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
+      .search-result-item:hover {
+        background-color: #e9ecef;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ads"></div>
+    <div class="editor">
+      <div class="toolbar">
+        <div class="toolbar-item">
           <button
-            id="btn-position"
-            style="min-width: 86px"
+            id="download"
+            onclick="downloadImage()"
             class="btn"
             type="button"
           >
-            Set Map
+            Download
+          </button>
+          <button id="startCrop" class="btn" type="button">Crop</button>
+          <button
+            id="applyCrop"
+            style="background-color: green"
+            class="btn"
+            type="button"
+          >
+            Terapkan Crop
+          </button>
+          <button
+            id="btnConfig"
+            class="btn btn-secondary"
+            type="button"
+            title="Device Config"
+          >
+            ⚙
+          </button>
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label" for="imageFileInput">File Gambar</label>
+          <div class="row" style="align-items: center; gap: 6px">
+            <input
+              type="file"
+              id="imageFileInput"
+              accept="image/*"
+              style="flex: 1"
+            />
+            <button
+              id="btnClearSidebar"
+              class="btn"
+              type="button"
+              style="
+                background-color: #dc3545;
+                display: none;
+                font-size: 13px;
+                padding: 2px 8px;
+              "
+              title="Hapus gambar"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label">Lokasi</label>
+          <div class="row" style="margin-bottom: 6px; gap: 4px">
+            <button
+              id="tabSearchAddr"
+              class="btn tab-btn tab-active"
+              type="button"
+              style="flex: 1; font-size: 13px"
+            >
+              🔍 Cari Alamat
+            </button>
+            <button
+              id="tabInputCoord"
+              class="btn tab-btn"
+              type="button"
+              style="flex: 1; font-size: 13px; opacity: 0.6"
+            >
+              📍 Input Koordinat
+            </button>
+          </div>
+          <div id="panelSearchAddr">
+            <div class="input-group">
+              <input
+                id="searchLocation"
+                type="text"
+                class="form-control"
+                placeholder="Cari alamat / nama tempat..."
+              />
+              <button
+                id="btn-search"
+                style="min-width: 70px"
+                class="btn"
+                type="button"
+              >
+                Cari
+              </button>
+            </div>
+            <div
+              id="searchResults"
+              style="
+                display: none;
+                max-height: 150px;
+                overflow-y: auto;
+                border: 1px solid #ced4da;
+                border-radius: 4px;
+                margin-top: 4px;
+                background: #fff;
+              "
+            ></div>
+          </div>
+          <div id="panelInputCoord" style="display: none">
+            <div class="input-group">
+              <input
+                id="latlong"
+                type="text"
+                name="koordinat"
+                class="form-control tool-input"
+                placeholder="Contoh : -3.431334, 114.878106"
+              />
+              <button
+                id="btn-position"
+                style="min-width: 86px"
+                class="btn"
+                type="button"
+              >
+                Set Map
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label" for="alamat">Alamat</label>
+          <textarea
+            name="alamat"
+            class="form-control tool-input"
+            id="alamat"
+            placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
+          ></textarea>
+          <small style="font-size: 10px; color: #555"
+            >*Tanda koma (,) akan membuat baris baru pada deskripsi di
+            gambar</small
+          >
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label" for="waktu">Tanggal dan Jam</label>
+          <input
+            type="datetime-local"
+            name="waktu"
+            class="form-control tool-input"
+            id="waktu"
+          />
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label" for="map-size">
+            Map Size :
+            <span id="valmapSize">300</span>
+          </label>
+          <input
+            class="tool-input"
+            type="range"
+            value="300"
+            id="map-size"
+            name="mapSize"
+            min="0"
+            max="1000"
+          />
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label" for="font-size"
+            >Font Size : <span id="valfontSize">60</span></label
+          >
+          <input
+            class="tool-input"
+            type="range"
+            value="60"
+            name="fontSize"
+            id="font-size"
+            min="0"
+            max="200"
+          />
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label">Preview Maps</label>
+          <small
+            style="
+              font-size: 10px;
+              color: #555;
+              display: block;
+              margin-bottom: 4px;
+            "
+            >💡 Tahan CTRL + klik pada peta untuk geser marker</small
+          >
+          <div id="maps-container">
+            <div id="maps" class="maps"></div>
+            <img src="./assets/google-logo.png" class="google-logo" />
+            <div
+              id="mapLoading"
+              style="
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1001;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <span class="spinner-border"></span>
+            </div>
+          </div>
+        </div>
+        <p class="copyright">
+          Copyright 2024 by <a href="https://kodekan.my.id">kodekan.my.id</a>
+        </p>
+      </div>
+      <div class="image-area" id="imageArea" style="position: relative">
+        <button
+          id="btnClearCanvas"
+          class="btn"
+          type="button"
+          style="
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background-color: #dc3545;
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            line-height: 1;
+          "
+          title="Hapus gambar"
+        >
+          ✕
+        </button>
+        <div id="dropZone" class="drop-zone">
+          <div class="drop-zone-icon">📷</div>
+          <div>Seret & lepas gambar di sini</div>
+          <div style="margin-top: 8px; font-size: 14px; color: #999">
+            atau klik untuk pilih file
+          </div>
+        </div>
+        <canvas
+          id="canvas"
+          height="500"
+          width="500"
+          style="display: none"
+        ></canvas>
+      </div>
+    </div>
+
+    <!-- Modal Config Device -->
+    <div id="configModal" class="modal-overlay">
+      <div class="modal-box">
+        <h3>⚙ Device Config</h3>
+        <label for="cfgDeviceMake">Merk Device</label>
+        <input type="text" id="cfgDeviceMake" placeholder="Contoh: samsung" />
+        <label for="cfgDeviceModel">Model Device</label>
+        <input type="text" id="cfgDeviceModel" placeholder="Contoh: SM-A715F" />
+        <label for="cfgSoftware">Software</label>
+        <input
+          type="text"
+          id="cfgSoftware"
+          placeholder="Contoh: Timestamp Camera"
+        />
+        <div class="modal-actions">
+          <button id="cfgCancel" class="btn btn-secondary" type="button">
+            Batal
+          </button>
+          <button id="cfgSave" class="btn btn-success" type="button">
+            Simpan
           </button>
         </div>
       </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="alamat">Alamat</label>
-        <textarea
-          type="text"
-          name="alamat"
-          class="form-control tool-input"
-          id="alamat"
-          placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
-        ></textarea>
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="waktu">Tanggal dan Jam</label>
-        <input
-          type="datetime-local"
-          name="waktu"
-          class="form-control tool-input"
-          id="waktu"
-        />
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="map-size">
-          Map Size :
-          <span id="valmapSize">300</span>
-        </label>
-        <input
-          class="tool-input"
-          type="range"
-          value="300"
-          id="map-size"
-          name="mapSize"
-          min="0"
-          max="1000"
-        />
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label" for="font-size"
-          >Font Size : <span id="valfontSize">60</span></label
-        >
-        <input
-          class="tool-input"
-          type="range"
-          value="60"
-          name="fontSize"
-          id="font-size"
-          min="0"
-          max="200"
-        />
-      </div>
-      <div class="toolbar-item">
-        <label class="tool-label">Preview Maps</label>
-        <div id="maps-container">
-          <div id="maps" class="maps"></div>
-          <img src="/assets/google-logo.png" class="google-logo" />
-        </div>
-      </div>
-      <p class="copyright">
-        Copyright 2024 by <a href="https://mhmdzaien.com">mhmdzaien</a>
-      </p>
     </div>
-    <div class="image-area">
-      <canvas id="canvas" height="500" width="500"></canvas>
-    </div>
-  </div>
-</body>
 
-<script>
-  const fileInput = document.querySelector("#imageFileInput");
-  const canvas = document.querySelector("#canvas");
-  const canvasCtx = canvas.getContext("2d");
-  const mapSizeInput = document.querySelector("#map-size");
-  const fontSizeInput = document.querySelector("#font-size");
-  const defaultCoordinate = [51.505, -0.09];
-  const greenIcon = L.icon({
-    iconUrl: window.location.origin + "/assets/marker.png",
-    iconSize: [25, 41], // size of the icon
-    iconAnchor: [12, 40], // point of the icon which will correspond to marker's location
-  });
-  const settings = {};
-  const linkAds = "https://omg10.com/4/10669318";
-
-  let cropper = null;
-  let originalImage = null;
-  let image = null;
-  let mapImage = null;
-  let map = null;
-  let marker = null;
-  let exif = {
-    "0th": {
-      256: 3264,
-      257: 2448,
-      271: "samsung",
-      272: "SM-A715F",
-      274: 1,
-      305: "Timestamp Camera",
-      306: "2024:10:19 15:38:51",
-      34665: 176,
-      34853: 366,
-    },
-    Exif: {
-      33434: [15, 10000],
-      33437: [18000, 10000],
-      34850: 2,
-      34855: 29,
-      36867: "2024:10:19 15:38:51",
-      36868: "2024:10:19 15:38:51",
-      37383: 2,
-      37384: 0,
-      37385: 0,
-      37386: [5230, 1000],
-    },
-    GPS: {
-      1: "S",
-      2: [
-        [2, 1],
-        [33, 1],
-        [39319, 1000],
-      ],
-      3: "E",
-      4: [
-        [115, 1],
-        [19, 1],
-        [15848, 1000],
-      ],
-    },
-  };
-  renderMap();
-  $("#applyCrop").hide();
-
-  const inputElements = document.getElementsByClassName("tool-input");
-
-  for (var i = 0; i < inputElements.length; i++) {
-    const eventName = ["alamat", "latlong"].includes(inputElements[i].id)
-      ? "keyup"
-      : "change";
-    inputElements[i].addEventListener(eventName, function (event) {
-      if (document.getElementById(`val${event.target.name}`)) {
-        document.getElementById(`val${event.target.name}`).innerText =
-          event.target.value;
-      }
-      settings[event.target.name] = event.target.value;
-      renderImage();
-    });
-  }
-
-  $("#startCrop").click(function () {
-    window.open(linkAds);
-    canvas.width = originalImage.width;
-    canvas.height = originalImage.height;
-    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    canvasCtx.drawImage(originalImage, 0, 0);
-    $(".image-area").css("padding", "0px");
-    if (!cropper) {
-      cropper = new Cropper(canvas, {
-        viewMode: 1,
-        maxContainerWidth: canvas.width / 10,
-        maxContainerHeight: canvas.height / 10,
+    <script>
+      const fileInput = document.querySelector("#imageFileInput");
+      const canvas = document.querySelector("#canvas");
+      const canvasCtx = canvas.getContext("2d");
+      const mapSizeInput = document.querySelector("#map-size");
+      const fontSizeInput = document.querySelector("#font-size");
+      const defaultCoordinate = [51.505, -0.09];
+      const greenIcon = L.icon({
+        iconUrl:
+          window.location.origin +
+          window.location.pathname +
+          "/assets/marker.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 40],
       });
-      $("#startCrop").hide();
-      $("#applyCrop").show();
-    }
-  });
+      const settings = {};
+      const linkAds = "https://omg10.com/4/10669318";
 
-  $("#applyCrop").click(function () {
-    image.src = cropper.getCroppedCanvas().toDataURL("image/jpeg");
-    cropper.destroy();
-    cropper = null;
-    $("#startCrop").show();
-    $("#applyCrop").hide();
-    $(".image-area").css("padding", "20px");
-  });
+      let cropper = null;
+      let originalImage = null;
+      let image = null;
+      let mapImage = null;
+      let map = null;
+      let marker = null;
+      let debounceTimer = null;
 
-  $("#btn-position").click(function () {
-    window.open(linkAds);
-    let address = "";
-    const latLong = $("#latlong").val();
+      // --- Device Config (localStorage) ---
+      const DEVICE_CONFIG_KEY = "geotag_device_config";
 
-    const [lat, long] = latLong
-      .trim()
-      .split(",")
-      .map((item) => item.trim());
-    if (lat && long) {
-      $(this).html("")
-      $(this).prepend(
-        `<span class="spinner-border spinner-border-sm text-light" role="status"></span>`
-      );
-      $(this).attr("disabled", true);
+      function loadDeviceConfig() {
+        const defaults = {
+          make: "samsung",
+          model: "SM-A715F",
+          software: "Timestamp Camera",
+        };
+        try {
+          const stored = localStorage.getItem(DEVICE_CONFIG_KEY);
+          if (stored) {
+            return Object.assign(defaults, JSON.parse(stored));
+          }
+        } catch (e) {}
+        return defaults;
+      }
 
-      const dms = decimalToDMSExif(lat, long);
-      exif.GPS = dms.exif;
-      moveMarker(lat, long);
-      fetch(
-        `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((jsonValue) => {
-          const { road, village, county, state } = jsonValue.address;
-          address = `${road ?? ""} ${village}, ${county}, ${state}`;
-        })
-        .finally(() => {
-          setTimeout(() => {
-            $("#alamat").val(address.trim());
-            renderImage();
-            $(this).children(".spinner-border").remove();
-            $(this).removeAttr("disabled");
-            $(this).html("Set Map")
-          }, 3000);
-        });
-    }
-  });
+      function saveDeviceConfig(config) {
+        localStorage.setItem(DEVICE_CONFIG_KEY, JSON.stringify(config));
+      }
 
-  function decimalToDMSExif(lat, lon) {
-    function toDMS(decimal, isLatitude) {
-      const isNegative = decimal < 0;
-      decimal = Math.abs(decimal);
+      let deviceConfig = loadDeviceConfig();
 
-      const degrees = Math.floor(decimal);
-      const minutesDecimal = (decimal - degrees) * 60;
-      const minutes = Math.floor(minutesDecimal);
-      const seconds = (minutesDecimal - minutes) * 60;
-
-      return {
-        degrees: degrees,
-        minutes: minutes,
-        seconds: seconds.toFixed(3),
-        direction: isLatitude
-          ? isNegative
-            ? "S"
-            : "N"
-          : isNegative
-          ? "W"
-          : "E",
+      // --- EXIF template ---
+      let exif = {
+        "0th": {
+          256: 3264,
+          257: 2448,
+          271: deviceConfig.make,
+          272: deviceConfig.model,
+          274: 1,
+          305: deviceConfig.software,
+          306: formatExifDate(new Date()),
+          34665: 176,
+          34853: 366,
+        },
+        Exif: {
+          33434: [15, 10000],
+          33437: [18000, 10000],
+          34850: 2,
+          34855: 29,
+          36867: formatExifDate(new Date()),
+          36868: formatExifDate(new Date()),
+          37383: 2,
+          37384: 0,
+          37385: 0,
+          37386: [5230, 1000],
+        },
+        GPS: {
+          1: "S",
+          2: [
+            [2, 1],
+            [33, 1],
+            [39319, 1000],
+          ],
+          3: "E",
+          4: [
+            [115, 1],
+            [19, 1],
+            [15848, 1000],
+          ],
+        },
       };
-    }
 
-    const latDMS = toDMS(lat, true);
-    const lonDMS = toDMS(lon, false);
-
-    const exif = {
-      1: latDMS.direction,
-      2: [
-        [latDMS.degrees, 1],
-        [latDMS.minutes, 1],
-        [latDMS.seconds * 1000, 1000],
-      ],
-      3: lonDMS.direction,
-      4: [
-        [lonDMS.degrees, 1],
-        [lonDMS.minutes, 1],
-        [lonDMS.seconds * 1000, 1000],
-      ],
-    };
-
-    return {
-      exif: exif,
-      latitude: `${latDMS.degrees}° ${latDMS.minutes}' ${latDMS.seconds}" ${latDMS.direction}`,
-      longitude: `${lonDMS.degrees}° ${lonDMS.minutes}' ${lonDMS.seconds}" ${lonDMS.direction}`,
-    };
-  }
-  function downloadImage() {
-    window.open(linkAds);
-    var link = document.createElement("a");
-    link.download = "Geotag Edit.jpg";
-    const injectExif = piexif.dump(exif);
-    link.href = piexif.insert(injectExif, canvas.toDataURL("image/jpeg"));
-    link.click();
-  }
-
-  function renderMap() {
-    map = L.map("maps", {
-      zoomControl: false,
-      attributionControl: false,
-    }).setView(defaultCoordinate, 16);
-    const layer = L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      {
-        maxZoom: 18,
+      // --- Format date to EXIF format "YYYY:MM:DD HH:MM:SS" ---
+      function formatExifDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const h = String(date.getHours()).padStart(2, "0");
+        const mi = String(date.getMinutes()).padStart(2, "0");
+        const s = String(date.getSeconds()).padStart(2, "0");
+        return `${y}:${m}:${d} ${h}:${mi}:${s}`;
       }
-    ).addTo(map);
-    map.on("moveend", function () {
-      setTimeout(() => {
-        const domNode = document.getElementById("maps-container");
-        html2canvas(domNode, {
-          useCORS: true,
-        }).then(function (mapCanvas) {
-          mapImage = new Image();
-          mapImage.src = mapCanvas.toDataURL("image/jpeg");
-          mapImage.onload = () => {
-            if (image) {
-              renderImage();
+
+      // --- Get current datetime from input or now ---
+      function getSelectedDate() {
+        const val = document.getElementById("waktu").value;
+        return val ? new Date(val) : new Date();
+      }
+
+      // --- Update EXIF before download ---
+      function updateExifBeforeDownload() {
+        const date = getSelectedDate();
+        const dateStr = formatExifDate(date);
+
+        // Update datetime fields
+        exif["0th"][306] = dateStr;
+        exif.Exif[36867] = dateStr;
+        exif.Exif[36868] = dateStr;
+
+        // Update device fields from config
+        exif["0th"][271] = deviceConfig.make;
+        exif["0th"][272] = deviceConfig.model;
+        exif["0th"][305] = deviceConfig.software;
+      }
+
+      renderMap();
+      $("#applyCrop").hide();
+
+      const inputElements = document.getElementsByClassName("tool-input");
+
+      for (var i = 0; i < inputElements.length; i++) {
+        const eventName = ["alamat", "latlong"].includes(inputElements[i].id)
+          ? "keyup"
+          : "change";
+        inputElements[i].addEventListener(eventName, function (event) {
+          if (document.getElementById(`val${event.target.name}`)) {
+            document.getElementById(`val${event.target.name}`).innerText =
+              event.target.value;
+          }
+          settings[event.target.name] = event.target.value;
+
+          // Debounce for text inputs
+          if (["alamat", "latlong"].includes(event.target.id)) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => renderImage(), 300);
+          } else {
+            renderImage();
+          }
+        });
+      }
+
+      // --- Crop ---
+      $("#startCrop").click(function () {
+        canvas.width = originalImage.width;
+        canvas.height = originalImage.height;
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        canvasCtx.drawImage(originalImage, 0, 0);
+        $(".image-area").css("padding", "0px");
+        if (!cropper) {
+          cropper = new Cropper(canvas, {
+            viewMode: 1,
+            maxContainerWidth: canvas.width / 10,
+            maxContainerHeight: canvas.height / 10,
+          });
+          $("#startCrop").hide();
+          $("#applyCrop").show();
+        }
+      });
+
+      $("#applyCrop").click(function () {
+        image.src = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+        cropper.destroy();
+        cropper = null;
+        $("#startCrop").show();
+        $("#applyCrop").hide();
+        $(".image-area").css("padding", "20px");
+      });
+
+      // --- Set Map / Geocode ---
+      $("#btn-position").click(function () {
+        let address = "";
+        const latLong = $("#latlong").val();
+
+        const [lat, long] = latLong
+          .trim()
+          .split(",")
+          .map((item) => item.trim());
+        if (lat && long) {
+          $(this).html("");
+          $(this).prepend(
+            `<span class="spinner-border spinner-border-sm text-light" role="status"></span>`,
+          );
+          $(this).attr("disabled", true);
+
+          const dms = decimalToDMSExif(lat, long);
+          exif.GPS = dms.exif;
+          moveMarker(lat, long);
+          fetch(
+            `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${long}&api_key=671ccc24ea7cf962310293sduc02b52`,
+          )
+            .then((res) => {
+              return res.json();
+            })
+            .then((jsonValue) => {
+              const { road, village, county, state } = jsonValue.address;
+              address = `${road ?? ""} ${village}, ${county}, ${state}`;
+            })
+            .finally(() => {
+              setTimeout(() => {
+                $("#alamat").val(address.trim());
+                renderImage();
+                $(this).children(".spinner-border").remove();
+                $(this).removeAttr("disabled");
+                $(this).html("Set Map");
+              }, 3000);
+            });
+        }
+      });
+
+      // --- Config Modal ---
+      document
+        .getElementById("btnConfig")
+        .addEventListener("click", function () {
+          // Load current config into modal inputs
+          document.getElementById("cfgDeviceMake").value = deviceConfig.make;
+          document.getElementById("cfgDeviceModel").value = deviceConfig.model;
+          document.getElementById("cfgSoftware").value = deviceConfig.software;
+          document.getElementById("configModal").classList.add("active");
+        });
+
+      document
+        .getElementById("cfgCancel")
+        .addEventListener("click", function () {
+          document.getElementById("configModal").classList.remove("active");
+        });
+
+      document.getElementById("cfgSave").addEventListener("click", function () {
+        deviceConfig.make =
+          document.getElementById("cfgDeviceMake").value.trim() || "samsung";
+        deviceConfig.model =
+          document.getElementById("cfgDeviceModel").value.trim() || "SM-A715F";
+        deviceConfig.software =
+          document.getElementById("cfgSoftware").value.trim() ||
+          "Timestamp Camera";
+        saveDeviceConfig(deviceConfig);
+        document.getElementById("configModal").classList.remove("active");
+      });
+
+      // Close modal on overlay click
+      document
+        .getElementById("configModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            this.classList.remove("active");
+          }
+        });
+
+      // --- Tab Toggle (Cari Alamat / Input Koordinat) ---
+      const tabSearchAddr = document.getElementById("tabSearchAddr");
+      const tabInputCoord = document.getElementById("tabInputCoord");
+      const panelSearchAddr = document.getElementById("panelSearchAddr");
+      const panelInputCoord = document.getElementById("panelInputCoord");
+
+      tabSearchAddr.addEventListener("click", function () {
+        panelSearchAddr.style.display = "";
+        panelInputCoord.style.display = "none";
+        tabSearchAddr.style.opacity = "1";
+        tabSearchAddr.classList.add("tab-active");
+        tabInputCoord.style.opacity = "0.6";
+        tabInputCoord.classList.remove("tab-active");
+      });
+
+      tabInputCoord.addEventListener("click", function () {
+        panelSearchAddr.style.display = "none";
+        panelInputCoord.style.display = "";
+        tabInputCoord.style.opacity = "1";
+        tabInputCoord.classList.add("tab-active");
+        tabSearchAddr.style.opacity = "0.6";
+        tabSearchAddr.classList.remove("tab-active");
+      });
+
+      // --- Search Location ---
+      let searchDebounce = null;
+      const searchInput = document.getElementById("searchLocation");
+      const searchResults = document.getElementById("searchResults");
+      const btnSearch = document.getElementById("btn-search");
+
+      function performSearch() {
+        const query = searchInput.value.trim();
+        if (!query || query.length < 3) {
+          searchResults.style.display = "none";
+          return;
+        }
+        btnSearch.disabled = true;
+        btnSearch.innerHTML =
+          '<span class="spinner-border" style="width:16px;height:16px;border-width:2px;"></span>';
+        fetch(
+          `https://geocode.maps.co/search?q=${encodeURIComponent(query)}&accept-language=id&api_key=671ccc24ea7cf962310293sduc02b52`,
+        )
+          .then((res) => res.json())
+          .then((results) => {
+            searchResults.innerHTML = "";
+            if (results && results.length > 0) {
+              results.slice(0, 5).forEach((item) => {
+                const div = document.createElement("div");
+                div.className = "search-result-item";
+                div.textContent = item.display_name;
+                div.addEventListener("click", function () {
+                  const lat = item.lat;
+                  const lon = item.lon;
+                  document.getElementById("latlong").value = `${lat}, ${lon}`;
+                  settings.koordinat = `${lat}, ${lon}`;
+                  searchResults.style.display = "none";
+                  searchInput.value = item.display_name;
+
+                  // Trigger same logic as Set Map
+                  const dms = decimalToDMSExif(lat, lon);
+                  exif.GPS = dms.exif;
+                  moveMarker(lat, lon);
+
+                  // Reverse geocode for address
+                  fetch(
+                    `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${lon}&api_key=671ccc24ea7cf962310293sduc02b52`,
+                  )
+                    .then((res) => res.json())
+                    .then((jsonValue) => {
+                      const { road, village, county, state } =
+                        jsonValue.address;
+                      const address = `${road ?? ""} ${village}, ${county}, ${state}`;
+                      $("#alamat").val(address.trim());
+                    })
+                    .finally(() => {
+                      renderImage();
+                    });
+                });
+                searchResults.appendChild(div);
+              });
+              searchResults.style.display = "block";
+            } else {
+              searchResults.innerHTML =
+                '<div class="search-result-item" style="color:#999;cursor:default;">Tidak ada hasil</div>';
+              searchResults.style.display = "block";
             }
-          };
-        });
-      }, 1000);
-    });
-    marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
-    moveMarker(defaultCoordinate[0], defaultCoordinate[1]);
-  }
-
-  function moveMarker(lat, long) {
-    marker.setLatLng([lat, long]);
-    map.setView([lat, long]);
-  }
-
-  function resetSettings() {
-    settings.mapSize = "300";
-    settings.fontSize = "60";
-
-    mapSizeInput.value = settings.mapSize;
-    fontSizeInput.value = settings.fontSize;
-  }
-
-  function notEmptyString(text) {
-    return text && text.trim() != "";
-  }
-
-  function renderImage() {
-    if (image) {
-      canvas.width = image.width;
-      canvas.height = image.height;
-
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      canvasCtx.drawImage(image, 0, 0);
-      if (mapImage) {
-        canvasCtx.drawImage(
-          mapImage,
-          0,
-          canvas.height - settings.mapSize,
-          settings.mapSize,
-          settings.mapSize
-        );
+          })
+          .catch(() => {
+            searchResults.innerHTML =
+              '<div class="search-result-item" style="color:red;cursor:default;">Gagal mencari</div>';
+            searchResults.style.display = "block";
+          })
+          .finally(() => {
+            btnSearch.disabled = false;
+            btnSearch.innerHTML = "Cari";
+          });
       }
-      renderText();
-    }
-  }
 
-  function renderText() {
-    var koordinat = document.getElementById("latlong").value;
-    var alamat = document.getElementById("alamat").value;
-    var waktu = document.getElementById("waktu").value
-      ? new Date(document.getElementById("waktu").value)
-      : new Date();
-    var waktuString = `${waktu.toLocaleString("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })} ${waktu.toLocaleTimeString("en-EN", {
-      hour12: false,
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })}`;
-    let lineHeight = 0;
-    let stringLines = [];
-    if (notEmptyString(alamat)) {
-      alamat
-        .split(",")
-        .reverse()
-        .forEach((item) => {
-          stringLines.push(item);
+      btnSearch.addEventListener("click", performSearch);
+
+      searchInput.addEventListener("keyup", function (e) {
+        if (e.key === "Enter") {
+          clearTimeout(searchDebounce);
+          performSearch();
+        } else {
+          clearTimeout(searchDebounce);
+          searchDebounce = setTimeout(performSearch, 500);
+        }
+      });
+
+      // Hide search results on outside click
+      document.addEventListener("click", function (e) {
+        if (
+          !searchResults.contains(e.target) &&
+          e.target !== searchInput &&
+          e.target !== btnSearch
+        ) {
+          searchResults.style.display = "none";
+        }
+      });
+
+      // --- Functions ---
+      function decimalToDMSExif(lat, lon) {
+        function toDMS(decimal, isLatitude) {
+          const isNegative = decimal < 0;
+          decimal = Math.abs(decimal);
+
+          const degrees = Math.floor(decimal);
+          const minutesDecimal = (decimal - degrees) * 60;
+          const minutes = Math.floor(minutesDecimal);
+          const seconds = (minutesDecimal - minutes) * 60;
+
+          return {
+            degrees: degrees,
+            minutes: minutes,
+            seconds: seconds.toFixed(3),
+            direction: isLatitude
+              ? isNegative
+                ? "S"
+                : "N"
+              : isNegative
+                ? "W"
+                : "E",
+          };
+        }
+
+        const latDMS = toDMS(lat, true);
+        const lonDMS = toDMS(lon, false);
+
+        const exif = {
+          1: latDMS.direction,
+          2: [
+            [latDMS.degrees, 1],
+            [latDMS.minutes, 1],
+            [latDMS.seconds * 1000, 1000],
+          ],
+          3: lonDMS.direction,
+          4: [
+            [lonDMS.degrees, 1],
+            [lonDMS.minutes, 1],
+            [lonDMS.seconds * 1000, 1000],
+          ],
+        };
+
+        return {
+          exif: exif,
+          latitude: `${latDMS.degrees}° ${latDMS.minutes}' ${latDMS.seconds}" ${latDMS.direction}`,
+          longitude: `${lonDMS.degrees}° ${lonDMS.minutes}' ${lonDMS.seconds}" ${lonDMS.direction}`,
+        };
+      }
+
+      function downloadImage() {
+        window.open(linkAds);
+        updateExifBeforeDownload();
+        var link = document.createElement("a");
+        link.download = "Geotag Edit.jpg";
+        const injectExif = piexif.dump(exif);
+        link.href = piexif.insert(injectExif, canvas.toDataURL("image/jpeg"));
+        link.click();
+      }
+
+      function renderMap() {
+        map = L.map("maps", {
+          zoomControl: false,
+          attributionControl: false,
+        }).setView(defaultCoordinate, 16);
+        L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            maxZoom: 18,
+          },
+        ).addTo(map);
+        map.on("moveend", function () {
+          const loadingEl = document.getElementById("mapLoading");
+          loadingEl.style.display = "flex";
+          setTimeout(() => {
+            const domNode = document.getElementById("maps-container");
+            html2canvas(domNode, {
+              useCORS: true,
+              ignoreElements: function (el) {
+                return el.id === "mapLoading";
+              },
+            })
+              .then(function (mapCanvas) {
+                mapImage = new Image();
+                mapImage.src = mapCanvas.toDataURL("image/jpeg");
+                mapImage.onload = () => {
+                  loadingEl.style.display = "none";
+                  if (image) {
+                    renderImage();
+                  }
+                };
+              })
+              .catch(function () {
+                loadingEl.style.display = "none";
+              });
+          }, 1000);
         });
-    }
-    if (notEmptyString(koordinat)) {
-      stringLines.push(koordinat);
-    }
-    if (notEmptyString(waktuString)) {
-      stringLines.push(waktuString);
-    }
-    stringLines.forEach((text) => {
-      canvasCtx.font = `bold ${settings.fontSize}px arial`;
-      canvasCtx.fillStyle = "white";
-      canvasCtx.textAlign = "right";
-      canvasCtx.fillText(
-        text,
-        canvas.width - 5,
-        canvas.height - (30 + lineHeight),
-        canvas.width - settings.mapSize - 20
-      );
-      canvasCtx.strokeText(
-        text,
-        canvas.width - 5,
-        canvas.height - (30 + lineHeight),
-        canvas.width - settings.mapSize - 20
-      );
-      lineHeight += Number(settings.fontSize);
-    });
-  }
+        marker = L.marker(defaultCoordinate, { icon: greenIcon }).addTo(map);
+        moveMarker(defaultCoordinate[0], defaultCoordinate[1]);
 
-  fileInput.addEventListener("change", () => {
-    image = new Image();
-    originalImage = new Image();
-    image.addEventListener("load", () => {
+        // CTRL + click to move marker
+        let ctrlPressed = false;
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Control") ctrlPressed = true;
+        });
+        document.addEventListener("keyup", function (e) {
+          if (e.key === "Control") ctrlPressed = false;
+        });
+        map.on("click", function (e) {
+          if (ctrlPressed) {
+            const lat = e.latlng.lat.toFixed(6);
+            const lon = e.latlng.lng.toFixed(6);
+            document.getElementById("latlong").value = `${lat}, ${lon}`;
+            settings.koordinat = `${lat}, ${lon}`;
+
+            const dms = decimalToDMSExif(lat, lon);
+            exif.GPS = dms.exif;
+
+            // Move marker and map view (triggers moveend -> map re-render)
+            moveMarker(lat, lon);
+
+            // Reverse geocode
+            fetch(
+              `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${lon}&api_key=671ccc24ea7cf962310293sduc02b52`,
+            )
+              .then((res) => res.json())
+              .then((jsonValue) => {
+                if (jsonValue && jsonValue.address) {
+                  const { road, village, county, state } = jsonValue.address;
+                  const address = `${road ?? ""} ${village ?? ""}, ${county ?? ""}, ${state ?? ""}`;
+                  $("#alamat").val(address.trim());
+                }
+              })
+              .finally(() => {
+                renderImage();
+              });
+          }
+        });
+      }
+
+      function moveMarker(lat, long) {
+        marker.setLatLng([lat, long]);
+        map.setView([lat, long]);
+      }
+
+      function resetSettings() {
+        settings.mapSize = "300";
+        settings.fontSize = "60";
+
+        mapSizeInput.value = settings.mapSize;
+        fontSizeInput.value = settings.fontSize;
+      }
+
+      function notEmptyString(text) {
+        return text && text.trim() !== "";
+      }
+
+      function renderImage() {
+        if (image) {
+          canvas.width = image.width;
+          canvas.height = image.height;
+
+          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+          canvasCtx.drawImage(image, 0, 0);
+          if (mapImage) {
+            canvasCtx.drawImage(
+              mapImage,
+              0,
+              canvas.height - settings.mapSize,
+              settings.mapSize,
+              settings.mapSize,
+            );
+          }
+          renderText();
+        }
+      }
+
+      function renderText() {
+        var koordinat = document.getElementById("latlong").value;
+        var alamat = document.getElementById("alamat").value;
+        var waktu = getSelectedDate();
+        var waktuString = `${waktu.toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })} ${waktu.toLocaleTimeString("en-EN", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}`;
+        let lineHeight = 0;
+        let stringLines = [];
+        if (notEmptyString(alamat)) {
+          alamat
+            .split(",")
+            .reverse()
+            .forEach((item) => {
+              stringLines.push(item);
+            });
+        }
+        if (notEmptyString(koordinat)) {
+          stringLines.push(koordinat);
+        }
+        if (notEmptyString(waktuString)) {
+          stringLines.push(waktuString);
+        }
+        stringLines.forEach((text) => {
+          canvasCtx.font = `bold ${settings.fontSize}px arial`;
+          canvasCtx.fillStyle = "white";
+          canvasCtx.textAlign = "right";
+          canvasCtx.fillText(
+            text,
+            canvas.width - 5,
+            canvas.height - (30 + lineHeight),
+            canvas.width - settings.mapSize - 20,
+          );
+          canvasCtx.strokeText(
+            text,
+            canvas.width - 5,
+            canvas.height - (30 + lineHeight),
+            canvas.width - settings.mapSize - 20,
+          );
+          lineHeight += Number(settings.fontSize);
+        });
+      }
+
+      // --- File Input with memory leak fix ---
+      let previousObjectUrl = null;
+      let previousOriginalObjectUrl = null;
+
+      // --- Extract EXIF GPS from file ---
+      function extractExifFromFile(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const exifData = piexif.load(e.target.result);
+            if (exifData && exifData.GPS) {
+              const gps = exifData.GPS;
+              // Check if GPS data exists (lat/lon direction + coordinates)
+              if (gps[1] && gps[2] && gps[3] && gps[4]) {
+                const latRef = gps[1]; // "N" or "S"
+                const latDMS = gps[2]; // [[deg,1],[min,1],[sec*1000,1000]]
+                const lonRef = gps[3]; // "E" or "W"
+                const lonDMS = gps[4];
+
+                const lat = dmsToDecimal(latDMS, latRef);
+                const lon = dmsToDecimal(lonDMS, lonRef);
+
+                if (!isNaN(lat) && !isNaN(lon)) {
+                  // Set coordinate input
+                  document.getElementById("latlong").value =
+                    `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                  settings.koordinat = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+
+                  // Update EXIF GPS
+                  exif.GPS = gps;
+
+                  // Move map marker
+                  moveMarker(lat, lon);
+
+                  // Reverse geocode for address
+                  fetch(
+                    `https://geocode.maps.co/reverse?accept-language=id&lat=${lat}&lon=${lon}&api_key=671ccc24ea7cf962310293sduc02b52`,
+                  )
+                    .then((res) => res.json())
+                    .then((jsonValue) => {
+                      if (jsonValue && jsonValue.address) {
+                        const { road, village, county, state } =
+                          jsonValue.address;
+                        const address = `${road ?? ""} ${village ?? ""}, ${county ?? ""}, ${state ?? ""}`;
+                        $("#alamat").val(address.trim());
+                      }
+                    })
+                    .finally(() => {
+                      renderImage();
+                    });
+                }
+              }
+            }
+
+            // Extract datetime from EXIF if available
+            if (exifData && exifData.Exif && exifData.Exif[36867]) {
+              const dtStr = exifData.Exif[36867]; // "YYYY:MM:DD HH:MM:SS"
+              const parts = dtStr.match(
+                /(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/,
+              );
+              if (parts) {
+                const isoStr = `${parts[1]}-${parts[2]}-${parts[3]}T${parts[4]}:${parts[5]}`;
+                document.getElementById("waktu").value = isoStr;
+              }
+            }
+          } catch (e) {
+            // No EXIF or parsing error — ignore
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function dmsToDecimal(dmsArr, ref) {
+        // dmsArr format: [[deg, denom], [min, denom], [sec, denom]]
+        const deg = dmsArr[0][0] / dmsArr[0][1];
+        const min = dmsArr[1][0] / dmsArr[1][1];
+        const sec = dmsArr[2][0] / dmsArr[2][1];
+        let decimal = deg + min / 60 + sec / 3600;
+        if (ref === "S" || ref === "W") {
+          decimal = -decimal;
+        }
+        return decimal;
+      }
+
+      // --- Shared file load function ---
+      function loadFile(file) {
+        if (!file || !file.type.startsWith("image/")) return;
+
+        // Revoke previous object URLs to prevent memory leak
+        if (previousObjectUrl) {
+          URL.revokeObjectURL(previousObjectUrl);
+        }
+        if (previousOriginalObjectUrl) {
+          URL.revokeObjectURL(previousOriginalObjectUrl);
+        }
+
+        // Extract EXIF data from the file
+        extractExifFromFile(file);
+
+        image = new Image();
+        originalImage = new Image();
+        image.addEventListener("load", () => {
+          // Hide drop zone, show canvas, show clear button
+          document.getElementById("dropZone").style.display = "none";
+          canvas.style.display = "";
+          document.getElementById("btnClearSidebar").style.display = "";
+          document.getElementById("btnClearCanvas").style.display = "";
+          resetSettings();
+          renderImage();
+        });
+
+        previousObjectUrl = URL.createObjectURL(file);
+        previousOriginalObjectUrl = URL.createObjectURL(file);
+        image.src = previousObjectUrl;
+        originalImage.src = previousOriginalObjectUrl;
+      }
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        loadFile(file);
+      });
+
+      // --- Clear Image ---
+      function clearImage() {
+        // Revoke URLs
+        if (previousObjectUrl) {
+          URL.revokeObjectURL(previousObjectUrl);
+          previousObjectUrl = null;
+        }
+        if (previousOriginalObjectUrl) {
+          URL.revokeObjectURL(previousOriginalObjectUrl);
+          previousOriginalObjectUrl = null;
+        }
+        // Reset state
+        image = null;
+        originalImage = null;
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
+        // Clear canvas
+        canvas.width = 500;
+        canvas.height = 500;
+        canvasCtx.clearRect(0, 0, 500, 500);
+        // Show drop zone, hide canvas
+        canvas.style.display = "none";
+        document.getElementById("dropZone").style.display = "";
+        // Hide clear buttons
+        document.getElementById("btnClearSidebar").style.display = "none";
+        document.getElementById("btnClearCanvas").style.display = "none";
+        // Reset file input
+        fileInput.value = "";
+        // Reset crop buttons
+        $("#startCrop").show();
+        $("#applyCrop").hide();
+        $(".image-area").css("padding", "20px");
+      }
+
+      document
+        .getElementById("btnClearSidebar")
+        .addEventListener("click", clearImage);
+      document
+        .getElementById("btnClearCanvas")
+        .addEventListener("click", clearImage);
+
+      // --- Drop Zone ---
+      const dropZone = document.getElementById("dropZone");
+
+      dropZone.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("drag-over");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          // Sync file input so toolbar shows filename
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+          loadFile(file);
+        }
+      });
+
       resetSettings();
-      renderImage();
-    });
-
-    image.src = URL.createObjectURL(fileInput.files[0]);
-    originalImage.src = URL.createObjectURL(fileInput.files[0]);
-  });
-
-  resetSettings();
-</script>
+    </script>
+  </body>
+</html>
