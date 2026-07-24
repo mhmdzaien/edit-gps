@@ -677,7 +677,18 @@
       // --- Get current datetime from input or now ---
       function getSelectedDate() {
         const val = document.getElementById("waktu").value;
-        return val ? new Date(val) : new Date();
+      
+        if (!val) {
+          return new Date();
+        }
+      
+        const selectedDate = new Date(val);
+        const now = new Date();
+      
+        selectedDate.setSeconds(now.getSeconds());
+        selectedDate.setMilliseconds(now.getMilliseconds());
+      
+        return selectedDate;
       }
 
       // --- Update EXIF before download ---
