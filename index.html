@@ -1155,10 +1155,11 @@
         let stringLines = [];
         if (notEmptyString(alamat)) {
           alamat
-            .split("#")
+            .replaceAll(",,","#)
+            .split(",")
             .reverse()
             .forEach((item) => {
-              stringLines.push(item);
+              stringLines.push(item.replaceAll("#",","));
             });
         }
         if (notEmptyString(koordinat)) {
