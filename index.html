@@ -429,7 +429,7 @@
             placeholder="[Jalan/Desa/Kelurahan], [Kecamatan], [Kabupaten/Kota], [Provinsi]"
           ></textarea>
           <small style="font-size: 10px; color: #555"
-            >*Tanda koma (,) akan membuat baris baru pada deskripsi di
+            >*Tanda pagar (#) akan membuat baris baru pada deskripsi di
             gambar</small
           >
         </div>
@@ -1144,7 +1144,7 @@
         let stringLines = [];
         if (notEmptyString(alamat)) {
           alamat
-            .split(",")
+            .split("#")
             .reverse()
             .forEach((item) => {
               stringLines.push(item);
