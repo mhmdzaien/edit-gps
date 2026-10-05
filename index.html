@@ -472,6 +472,51 @@
           />
         </div>
         <div class="toolbar-item">
+          <label class="tool-label" for="map-opacity"
+            >Map Opacity : <span id="valmapOpacity">85</span>%</label
+          >
+          <input
+            class="tool-input"
+            type="range"
+            value="85"
+            name="mapOpacity"
+            id="map-opacity"
+            min="0"
+            max="100"
+          />
+        </div>
+        <div class="toolbar-item">
+          <label class="tool-label">Map Padding</label>
+          <div class="row" style="gap: 8px;">
+            <div style="flex: 1;">
+              <label style="font-size: 12px; display: block; margin-bottom: 4px;">Left (px)</label>
+              <input
+                class="form-control tool-input"
+                type="number"
+                value="10"
+                name="mapPaddingX"
+                id="map-padding-x"
+                min="0"
+                max="500"
+                placeholder="10"
+              />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 12px; display: block; margin-bottom: 4px;">Bottom (px)</label>
+              <input
+                class="form-control tool-input"
+                type="number"
+                value="10"
+                name="mapPaddingY"
+                id="map-padding-y"
+                min="0"
+                max="500"
+                placeholder="10"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="toolbar-item">
           <label class="tool-label">Preview Maps</label>
           <small
             style="
@@ -1026,9 +1071,9 @@
           attributionControl: false,
         }).setView(defaultCoordinate, 16);
         L.tileLayer(
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          "http://mt0.google.com/vt/lyrs=y&hl=id&x={x}&y={y}&z={z}",
           {
-            maxZoom: 18,
+            maxZoom: 20,
           },
         ).addTo(map);
         map.on("moveend", function () {
@@ -1108,9 +1153,15 @@
       function resetSettings() {
         settings.mapSize = "300";
         settings.fontSize = "60";
+        settings.mapOpacity = "85";
+        settings.mapPaddingX = "10";
+        settings.mapPaddingY = "10";
 
         mapSizeInput.value = settings.mapSize;
         fontSizeInput.value = settings.fontSize;
+        document.querySelector("#map-opacity").value = settings.mapOpacity;
+        document.querySelector("#map-padding-x").value = settings.mapPaddingX;
+        document.querySelector("#map-padding-y").value = settings.mapPaddingY;
       }
 
       function notEmptyString(text) {
@@ -1125,13 +1176,19 @@
           canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
           canvasCtx.drawImage(image, 0, 0);
           if (mapImage) {
+            // Set opacity untuk peta
+            canvasCtx.globalAlpha = Number(settings.mapOpacity) / 100;
+            
             canvasCtx.drawImage(
               mapImage,
-              0,
-              canvas.height - settings.mapSize,
+              Number(settings.mapPaddingX),
+              canvas.height - settings.mapSize - Number(settings.mapPaddingY),
               settings.mapSize,
               settings.mapSize,
             );
+            
+            // Kembalikan opacity ke normal
+            canvasCtx.globalAlpha = 1.0;
           }
           renderText();
         }
